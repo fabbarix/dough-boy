@@ -50,5 +50,10 @@ python3 -m http.server -d . 8000
 
 ## Deployment
 
-GitHub Pages, served from the default branch at the repository root. `CNAME` points the site at
-`pizza.orksu.com`; add a DNS `CNAME` record for `pizza` pointing at `fabbarix.github.io`.
+GitHub Pages, published by `.github/workflows/pages.yml` on every push to the default branch: the
+repository root is uploaded as the Pages artifact and deployed as-is. Set **Settings → Pages →
+Source** to *GitHub Actions* for the workflow to have somewhere to deploy to.
+
+The site answers on `pizza.orksu.com`; add a DNS `CNAME` record for `pizza` pointing at
+`fabbarix.github.io`, then set the custom domain under Settings → Pages and enable *Enforce HTTPS*.
+`.nojekyll` keeps Pages from running the tree through Jekyll.
