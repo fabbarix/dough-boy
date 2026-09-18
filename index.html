@@ -302,11 +302,11 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
           <button type="button" class="size" data-shape="0">Tonda<span class="g">round &middot; rule of 22</span></button>
           <button type="button" class="size" data-shape="1">Teglia<span class="g">pan &middot; w &times; h &divide; 2</span></button>
         </div>
+        <div id="roundFields">
         <div class="field">
-          <div class="top"><label for="n" id="nLabel">Panetti (dough balls)</label></div>
+          <div class="top"><label for="n">Panetti (dough balls)</label></div>
           <input type="number" id="n" min="1" max="500" step="1" value="20">
         </div>
-        <div id="roundFields">
         <div class="sizes" role="group" aria-label="Pizza diameter">
           <button type="button" class="size" data-d="10">10&Prime;<span class="g" data-g="10"></span></button>
           <button type="button" class="size" data-d="12">12&Prime;<span class="g" data-g="12"></span></button>
@@ -327,6 +327,10 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         </div>
 
         <div id="panFields" hidden>
+        <div class="field">
+          <div class="top"><label for="pn">Teglie (pans)</label></div>
+          <input type="number" id="pn" min="1" max="200" step="1" value="2">
+        </div>
         <div class="pans" role="group" aria-label="Pan size">
           <button type="button" class="size" data-w="30" data-h="40" data-unit="0">30 &times; 40 cm<span class="g"></span></button>
           <button type="button" class="size" data-w="40" data-h="60" data-unit="0">40 &times; 60 cm<span class="g"></span></button>
@@ -543,7 +547,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 <script>
 (function(){
   "use strict";
-  var DEF = {n:20,shape:0,d:12,k:22,pw:30,ph:40,pk:2,unit:0,w:264,
+  var DEF = {n:20,shape:0,d:12,k:22,pn:2,pw:30,ph:40,pk:2,unit:0,w:264,
              h:65,salt:2.8,malt:0.5,bf:80,bh:45,st:250,tb:18,tk:2,ta:5,bake:""};
   var KEYS = Object.keys(DEF);
   var S = {};
@@ -586,7 +590,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   function readStore(){
     try{ var s = localStorage.getItem("biga.v1"); return s ? JSON.parse(s) : {}; }catch(e){ return {}; }
   }
-  var ROUND_KEYS = ["d","k"], PAN_KEYS = ["pw","ph","pk","unit"];
+  var ROUND_KEYS = ["n","d","k"], PAN_KEYS = ["pn","pw","ph","pk","unit"];
   function inPlay(k){
     if(ROUND_KEYS.indexOf(k) >= 0) return !isPan();
     if(PAN_KEYS.indexOf(k) >= 0) return isPan();
@@ -629,6 +633,9 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
      inches are converted to cm before the rule is applied. */
   var IN = 2.54;
   function isPan(){ return S.shape === 1; }
+  /* each shape keeps its own batch count: 20 panetti is a sensible tray,
+     20 teglie is 12 kg of dough */
+  function count(){ return isPan() ? S.pn : S.n; }
   function panSide(v){ return S.unit ? v*IN : v; }
   function panArea(){ return panSide(S.pw) * panSide(S.ph); }   // cm²
   function pieceWeight(){ return isPan() ? panArea()/S.pk : S.d*S.k; }
@@ -657,7 +664,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   var BOLD  = function(s){ return "<b>" + s + "</b>"; };
   var PLAIN = function(s){ return s; };
   function staglioText(b){
-    var q = b(S.n + " × " + g(S.w) + " g");
+    var q = b(count() + " × " + g(S.w) + " g");
     return isPan()
       ? "Divide into " + q + " panetti, one per " + panLabel() + " teglia. Round them loosely — a teglia dough wants to stay slack — and set them in an oiled box."
       : "Divide into " + q + " panetti, round them tight, and set them in a proofing box with room to spread.";
@@ -668,12 +675,12 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       : "Proof until each panetto is domed, slack and holds a slow dimple. Then open by hand and bake as hot as your oven goes.";
   }
   function staglioNote(){
-    return S.n + " × " + g(S.w) + " g" + (isPan() ? ", one per teglia" : " panetti");
+    return count() + " × " + g(S.w) + " g" + (isPan() ? ", one per teglia" : " panetti");
   }
 
   /* ---------- the math ---------- */
   function compute(){
-    var W  = S.n * S.w;                 // total dough
+    var W  = count() * S.w;                 // total dough
     var H  = S.h/100, SA = S.salt/100, MA = S.malt/100;
     var B  = S.bf/100, HB = S.bh/100;
     var F  = W / (1 + H + SA + MA);     // total flour, starter flour included
@@ -737,7 +744,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     f += row("Malt", d.malt, pc(d.malt/F));
     f += row("Dough", d.W, pc(d.W/F), "sum");
     $("finalRows").innerHTML = f;
-    $("finalMeta").textContent = S.n+" × "+g(S.w)+" g "+pieceWord(S.n)+" · "+sizeLine();
+    $("finalMeta").textContent = count()+" × "+g(S.w)+" g "+pieceWord(count())+" · "+sizeLine();
   }
 
   function renderAlerts(d){
@@ -799,7 +806,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 
   function recipeText(d){
     var L = [];
-    L.push("BIGA & RINFRESCO — "+S.n+" x "+g(S.w)+" g "+pieceWord(S.n)+"  ("+sizeTail()+")");
+    L.push("BIGA & RINFRESCO — "+count()+" x "+g(S.w)+" g "+pieceWord(count())+"  ("+sizeTail()+")");
     L.push(S.h+"% hydration · "+S.bf+"% biga at "+S.bh+"% · salt "+S.salt+"% · malt "+S.malt+"%");
     L.push("");
     L.push("BIGA");
@@ -838,7 +845,6 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     var pan = isPan();
     $("roundFields").hidden = pan;
     $("panFields").hidden = !pan;
-    $("nLabel").textContent = pan ? "Teglie (pans)" : "Panetti (dough balls)";
     $("wLabel").textContent = pan ? "Weight per teglia" : "Weight per panetto";
     $("pwHint").textContent = $("phHint").textContent = S.unit ? "inches" : "cm";
     $("finalSub").textContent = pan ? "what goes into each teglia" : "what ends up in the panetti";
@@ -1025,7 +1031,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   }
 
   function pdfName(){
-    return "biga-rinfresco-" + S.n + "x" + Math.round(S.w) + "g.pdf";
+    return "biga-rinfresco-" + count() + "x" + Math.round(S.w) + "g.pdf";
   }
 
   function buildPdf(){
@@ -1041,7 +1047,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     function rule(x,yy,w,c,h){ bar(x,yy,w,h||0.2,c); }
     function vline(x,y0,y1,c){ doc.setDrawColor(c[0],c[1],c[2]); doc.setLineWidth(0.2); doc.line(x,y0,x,y1); }
 
-    var foot = S.n + " × " + g(S.w) + " g " + pieceWord(S.n) + "  ·  " + Number(S.h).toFixed(1) + "% hydration  ·  "
+    var foot = count() + " × " + g(S.w) + " g " + pieceWord(count()) + "  ·  " + Number(S.h).toFixed(1) + "% hydration  ·  "
              + S.bf + "% biga at " + Number(S.bh).toFixed(1) + "%";
 
     function footer(){
@@ -1067,7 +1073,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         PW - MR, y, {align:"right"});
     y += 6.6;
     fnt("Plex","normal",9.6,C.mid);
-    txt(S.n + " " + pieceWord(S.n) + " of " + g(S.w) + " g  —  " + sizeTail(), ML, y);
+    txt(count() + " " + pieceWord(count()) + " of " + g(S.w) + " g  —  " + sizeTail(), ML, y);
     y += 4.2;
     rule(ML, y, CW, C.ink, 0.7); y += 0.7;
 
@@ -1177,7 +1183,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       {label:"Water", grams:g(d.Wt), pct:pc(d.Wt/F)},
       {label:"Salt", grams:g(d.salt), pct:pc(d.salt/F)},
       {label:"Malt", grams:g(d.malt), pct:pc(d.malt/F)},
-      {label:S.n + " " + pieceWord(S.n) + " of " + g(S.w) + " g", grams:g(d.W), pct:pc(d.W/F), kind:"sum"}
+      {label:count() + " " + pieceWord(count()) + " of " + g(S.w) + " g", grams:g(d.W), pct:pc(d.W/F), kind:"sum"}
     ]) + 10;
 
     /* ---- method ---- */
