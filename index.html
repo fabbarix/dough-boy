@@ -669,6 +669,19 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       ? "Divide into " + q + " panetti, one per " + panLabel() + " teglia. Round them loosely — a teglia dough wants to stay slack — and set them in an oiled box."
       : "Divide into " + q + " panetti, round them tight, and set them in a proofing box with room to spread.";
   }
+  /* with the whole flour in the biga there is no flour to add back, and
+     "Add 0 g of flour" is not an instruction */
+  function rinfAdd(b, d){
+    return d.noRinfFlour
+      ? "Add " + b(gu(d.malt)) + " of malt"
+      : "Add " + b(gu(d.rFlour)) + " of flour and " + b(gu(d.malt)) + " of malt";
+  }
+  function rinfNote(d){
+    return d.noRinfFlour ? "water, then malt and salt" : "remaining flour and water, then malt and salt";
+  }
+  function rinfSub(d){
+    return d.noRinfFlour ? "no flour \u00b7 water, salt and malt only" : null;
+  }
   function apprettoText(){
     return isPan()
       ? "Proof until each panetto is domed and airy. Then tip it into a well-oiled teglia, press it out to the corners with flat fingertips, and bake as hot as your oven goes."
@@ -694,6 +707,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     var rFlour = F - bFlour, rWater = Wt - bWater;
 
     return {W:W,F:F,Wt:Wt,salt:salt,malt:malt,
+            noRinfFlour: rFlour < 0.05,   // 100% biga: nothing left to refresh with
             bFlour:bFlour,bWater:bWater,bAddF:bAddF,bAddW:bAddW,bigaMass:bigaMass,
             sf:sf,sw:sw,rFlour:rFlour,rWater:rWater,
             starterPctBiga: bFlour>0 ? S.st/bFlour : 0,
@@ -727,15 +741,15 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 
     var r = "";
     r += row("Biga (all of it)", d.bigaMass, pc(d.bigaMass/F));
-    r += row("Flour <span class=\"tag r\">add</span>", d.rFlour, pc(d.rFlour/F));
+    if(!d.noRinfFlour) r += row("Flour <span class=\"tag r\">add</span>", d.rFlour, pc(d.rFlour/F));
     r += row("Water <span class=\"tag r\">add</span>", d.rWater, pc(d.rWater/F));
     r += row("Salt", d.salt, pc(d.salt/F));
     r += row("Malt", d.malt, pc(d.malt/F));
     r += row("Final dough", d.finalMass, pc(d.finalMass/F), "sum");
     $("rinfRows").innerHTML = r;
     var rh = d.rFlour>0 ? (d.rWater/d.rFlour) : NaN;
-    $("rinfMeta").textContent = (100-S.bf).toFixed(0)+"% flour · added water "
-                              + (isFinite(rh)? (rh*100).toFixed(0)+"% of that flour" : "—");
+    $("rinfMeta").textContent = rinfSub(d) || ((100-S.bf).toFixed(0)+"% flour · added water "
+                              + (isFinite(rh)? (rh*100).toFixed(0)+"% of that flour" : "—"));
 
     var f = "";
     f += row("Flour", d.F, "100.0%");
@@ -752,7 +766,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     if(d.bAddF < 0) a.push(["Starter too large","its "+gu(d.sf)+" of flour exceeds the biga's "+gu(d.bFlour)+". Cut the starter or raise the biga's share of the flour."]);
     if(d.bAddW < 0) a.push(["No water left for the biga","the starter brings "+gu(d.sw)+" but the biga only takes "+gu(d.bWater)+" at "+S.bh+"% hydration."]);
     if(d.rWater < 0) a.push(["Biga is wetter than the final dough","at "+S.bh+"% over "+S.bf+"% of the flour, the biga already holds more water than "+S.h+"% total hydration allows. Lower the biga hydration or its flour share."]);
-    if(d.rFlour <= 0 && S.bf >= 100) a.push(["No flour left to refresh with","at 100% biga there is no rinfresco flour — this is a straight biga dough."]);
+    if(d.noRinfFlour) a.push(["Biga with 100% of flour","rinfresco requires no flour"]);
     $("alerts").innerHTML = a.map(function(x){
       return "<div class=\"alert\"><b>"+x[0]+"</b><span>"+x[1]+"</span></div>";
     }).join("");
@@ -762,7 +776,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     var steps = [
       ["Mix the biga", "Break <b>"+gu(S.st)+"</b> of starter into <b>"+gu(Math.max(d.bAddW,0))+"</b> of cool water, then rub in <b>"+gu(Math.max(d.bAddF,0))+"</b> of flour until every crumb is damp. Shaggy, not smooth — a stiff biga at "+S.bh+"% is meant to look under-mixed."],
       ["Ferment "+S.tb+" h", "Cover loosely and hold at 16–18 °C. It is ready when it smells of yogurt and hazelnut and has roughly doubled; a warmer room shortens this considerably."],
-      ["Rinfresco", "Break the <b>"+gu(d.bigaMass)+"</b> of biga into <b>"+gu(Math.max(d.rWater,0))+"</b> of water, hold back a little to dissolve the salt. Add <b>"+gu(d.rFlour)+"</b> of flour and <b>"+gu(d.malt)+"</b> of malt, mix to a rough mass, rest 20 min."],
+      ["Rinfresco", "Break the <b>"+gu(d.bigaMass)+"</b> of biga into <b>"+gu(Math.max(d.rWater,0))+"</b> of water, hold back a little to dissolve the salt. "+rinfAdd(BOLD,d)+", mix to a rough mass, rest 20 min."],
       ["Salt and develop", "Add <b>"+gu(d.salt)+"</b> of salt with the reserved water and mix until the dough clears the bowl and passes a windowpane. Keep the finish under 25 °C."],
       ["Bulk "+S.tk+" h", "Covered, at room temperature, with a fold at the halfway point if the dough feels slack."],
       ["Staglio", staglioText(BOLD)],
@@ -773,7 +787,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     }).join("");
   }
 
-  function renderSchedule(){
+  function renderSchedule(d){
     var t = new Date(S.bake);
     var el = $("sched");
     if(isNaN(t.getTime())){
@@ -789,7 +803,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     var rows = [
       [refresh, "Refresh the starter", "so it peaks just as the biga is mixed", false],
       [bigaMix, "Impasto biga", "flour, water and starter only", false],
-      [bulk, "Rinfresco", "remaining flour and water, then malt and salt", false],
+      [bulk, "Rinfresco", rinfNote(d), false],
       [appretto, "Staglio", staglioNote(), false],
       [t, "Into the oven", "", true]
     ];
@@ -817,7 +831,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     L.push("");
     L.push("RINFRESCO");
     L.push("  biga             "+gu(d.bigaMass));
-    L.push("  flour            "+gu(d.rFlour));
+    if(!d.noRinfFlour) L.push("  flour            "+gu(d.rFlour));
     L.push("  water            "+gu(d.rWater));
     L.push("  salt             "+gu(d.salt));
     L.push("  malt             "+gu(d.malt));
@@ -891,7 +905,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 
   function render(){
     var d = compute();
-    renderTables(d); renderAlerts(d); renderMethod(d); renderSchedule();
+    renderTables(d); renderAlerts(d); renderMethod(d); renderSchedule(d);
     $("copyOut").value = recipeText(d);
   }
 
@@ -1012,7 +1026,8 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   var PDFPAGES = 0;
   var C = {
     ink:[18,22,31], mid:[58,66,82], muted:[106,114,130], line:[206,213,224],
-    hair:[229,233,240], fill:[243,245,249], cobalt:[38,69,196], brass:[140,98,16]
+    hair:[229,233,240], fill:[243,245,249], cobalt:[38,69,196], brass:[140,98,16],
+    warn:[169,60,22], warnSoft:[251,234,226]
   };
 
   function pdfDoc(){
@@ -1101,6 +1116,15 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         + Number(S.salt).toFixed(2) + "%   ·   malt " + Number(S.malt).toFixed(2) + "%", ML, y);
     y += 9;
 
+    if(d.noRinfFlour){
+      need(16);
+      bar(ML, y - 4.6, CW, 10, C.warnSoft);
+      bar(ML, y - 4.6, 1.3, 10, C.warn);
+      fnt("Plex","normal",8,C.warn);
+      txt("Biga with 100% of flour — rinfresco requires no flour", ML + 4.6, y + 1.8);
+      y += 13;
+    }
+
     /* ---- tables ---- */
     function drawTable(x, w, y0, rows){
       var gR = x + w - (w > 120 ? 32 : 19), pR = x + w, yy = y0;
@@ -1154,18 +1178,18 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     ];
     var rinfRows = [
       {label:"Biga, all of it", grams:g(d.bigaMass), pct:pc(d.bigaMass/F)},
-      {label:"Flour", grams:g(d.rFlour), pct:pc(d.rFlour/F)},
+      {label:"Flour", grams:g(d.rFlour), pct:pc(d.rFlour/F), skip:d.noRinfFlour},
       {label:"Water", grams:g(d.rWater), pct:pc(d.rWater/F)},
       {label:"Salt", grams:g(d.salt), pct:pc(d.salt/F)},
       {label:"Malt", grams:g(d.malt), pct:pc(d.malt/F)},
       {label:"Final dough", grams:g(d.finalMass), pct:pc(d.finalMass/F), kind:"sum"}
-    ];
+    ].filter(function(r){ return !r.skip; });
     var rh = d.rFlour > 0 ? (d.rWater / d.rFlour * 100).toFixed(0) + "% of that flour" : "—";
     var e1 = drawStage(ML, colW, y, "Biga", "impasto indiretto",
       S.bf + "% flour · " + Number(S.bh).toFixed(1) + "% hyd · starter "
       + (d.starterPctBiga*100).toFixed(1) + "% of biga flour", C.cobalt, bigaRows);
     var e2 = drawStage(ML + colW + 8, colW, y, "Rinfresco", "impasto finale",
-      (100 - S.bf) + "% flour · added water " + rh, C.brass, rinfRows);
+      rinfSub(d) || ((100 - S.bf) + "% flour · added water " + rh), C.brass, rinfRows);
     y = Math.max(e1, e2) + 9;
 
     function heading(title, sub){
@@ -1196,8 +1220,8 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         + S.bh + "% is meant to look under-mixed."],
       ["Ferment " + S.tb + " h", "Cover loosely and hold at 16–18 °C. It is ready when it smells of yogurt and hazelnut and has roughly doubled; a warmer room shortens this considerably."],
       ["Rinfresco", "Break the " + gu(d.bigaMass) + " of biga into " + gu(Math.max(d.rWater,0))
-        + " of water, holding back a little to dissolve the salt. Add " + gu(d.rFlour) + " of flour and "
-        + gu(d.malt) + " of malt, mix to a rough mass, rest 20 minutes."],
+        + " of water, holding back a little to dissolve the salt. " + rinfAdd(PLAIN,d)
+        + ", mix to a rough mass, rest 20 minutes."],
       ["Salt and develop", "Add " + gu(d.salt) + " of salt with the reserved water and mix until the dough clears the bowl and passes a windowpane. Keep the finish under 25 °C."],
       ["Bulk " + S.tk + " h", "Covered, at room temperature, with a fold at the halfway point if the dough feels slack."],
       ["Staglio", staglioText(PLAIN)],
@@ -1232,7 +1256,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       var rows = [
         [refresh, "Refresh the starter", "so it peaks as the biga is mixed", 0],
         [bigaMix, "Impasto biga", "flour, water and starter only", 0],
-        [bulk, "Rinfresco", "remaining flour and water, then malt and salt", 0],
+        [bulk, "Rinfresco", rinfNote(d), 0],
         [appretto, "Staglio", staglioNote(), 0],
         [t, "Into the oven", "", 1]
       ];
