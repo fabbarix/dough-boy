@@ -19,6 +19,8 @@ want — a round panetto, or a teglia sized by the Italian pan rule.
   6.5 × 9.5″ at 199 g. Sides can be given in centimetres or inches; inches are converted before the rule
   is applied, and the divisor is editable for a thicker or thinner pan. Typing a weight overrides the rule
   and leaves the pan alone — one number cannot back-solve two sides.
+- **Each shape keeps its own batch count** — 20 panetti, 2 teglie — so switching between them does
+  not ask for 20 sheet pans of dough.
 - **Total hydration, salt and malt** are baker's percentages against *total* flour.
 - **The biga** takes a chosen share of the flour at its own hydration. The starter's flour and water
   are counted *inside* the biga's totals, so both the biga's stated hydration and the formula's total
@@ -28,7 +30,8 @@ want — a round panetto, or a teglia sized by the Italian pan rule.
 - **Method and timetable follow the shape** — a tonda is opened by hand, a teglia is tipped into an oiled
   pan and pressed to the corners.
 - **Timetable** counts back from the bake time through appretto, staglio, bulk, rinfresco and the biga.
-- **Share link** writes every setting into the address as query parameters.
+- **Share link** writes every setting into the address as query parameters, and every setting — shape,
+  pan, unit, counts and formula — is remembered in `localStorage` for the next visit.
 - **Print recipe as PDF** composes a two-page sheet — formula, method, timetable — as a real vector
   PDF with IBM Plex subset and embedded, generated entirely in the browser.
 
