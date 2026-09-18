@@ -150,6 +150,8 @@ input[type="range"]::-moz-range-thumb{
   border:2px solid var(--surface);cursor:pointer;
 }
 .sizes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.shapes,.units{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.pans{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
 .size{
   font-family:var(--cond);font-weight:600;font-size:12.5px;letter-spacing:.02em;
   padding:7px 2px;border-radius:7px;cursor:pointer;
@@ -289,17 +291,22 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       <p class="eyebrow">Metodo indiretto · biga + rinfresco</p>
       <h1>Biga &amp; Rinfresco</h1>
     </div>
-    <p>Baker's-percentage calculator for a stiff biga built on a 100&nbsp;% hydration sourdough starter, refreshed into a final dough. Every gram is derived from the panetto weight you actually want.</p>
+    <p>Baker's-percentage calculator for a stiff biga built on a 100&nbsp;% hydration sourdough starter, refreshed into a final dough. Every gram is derived from the weight of the piece you actually want — a round panetto, or a teglia sized by the Italian pan rule.</p>
   </header>
 
   <div class="cols">
     <form class="panel controls" id="controls" autocomplete="off">
       <fieldset>
         <legend>Batch</legend>
+        <div class="shapes" role="group" aria-label="Pizza style">
+          <button type="button" class="size" data-shape="0">Tonda<span class="g">round &middot; rule of 22</span></button>
+          <button type="button" class="size" data-shape="1">Teglia<span class="g">pan &middot; w &times; h &divide; 2</span></button>
+        </div>
         <div class="field">
-          <div class="top"><label for="n">Panetti (dough balls)</label></div>
+          <div class="top"><label for="n" id="nLabel">Panetti (dough balls)</label></div>
           <input type="number" id="n" min="1" max="500" step="1" value="20">
         </div>
+        <div id="roundFields">
         <div class="sizes" role="group" aria-label="Pizza diameter">
           <button type="button" class="size" data-d="10">10&Prime;<span class="g" data-g="10"></span></button>
           <button type="button" class="size" data-d="12">12&Prime;<span class="g" data-g="12"></span></button>
@@ -317,9 +324,44 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
           <div class="top"><label for="k">Rule of 22</label><span class="hint">grams per inch</span></div>
           <input type="number" id="k" min="12" max="36" step="0.5" value="22">
         </div>
+        </div>
+
+        <div id="panFields" hidden>
+        <div class="pans" role="group" aria-label="Pan size">
+          <button type="button" class="size" data-w="30" data-h="40" data-unit="0">30 &times; 40 cm<span class="g"></span></button>
+          <button type="button" class="size" data-w="40" data-h="60" data-unit="0">40 &times; 60 cm<span class="g"></span></button>
+          <button type="button" class="size" data-w="18" data-h="26" data-unit="1">Full 18 &times; 26&Prime;<span class="g"></span></button>
+          <button type="button" class="size" data-w="13" data-h="18" data-unit="1">Half 13 &times; 18&Prime;<span class="g"></span></button>
+          <button type="button" class="size" data-w="9.5" data-h="13" data-unit="1">Quarter 9.5 &times; 13&Prime;<span class="g"></span></button>
+          <button type="button" class="size" data-w="6.5" data-h="9.5" data-unit="1">Eighth 6.5 &times; 9.5&Prime;<span class="g"></span></button>
+        </div>
+        <div class="units" role="group" aria-label="Pan measurement unit">
+          <button type="button" class="size" data-unit="0">Centimetres</button>
+          <button type="button" class="size" data-unit="1">Inches</button>
+        </div>
         <div class="field">
-          <div class="top"><label for="w">Weight per panetto</label><span class="hint" id="wHint">grams</span></div>
-          <input type="number" id="w" min="80" max="1200" step="1" value="264">
+          <div class="top"><label for="pw">Pan width</label><span class="hint" id="pwHint">cm</span></div>
+          <div class="pair">
+            <input type="range" id="pwR" min="8" max="100" step="0.5" value="30">
+            <input type="number" id="pw" min="8" max="100" step="0.5" value="30">
+          </div>
+        </div>
+        <div class="field">
+          <div class="top"><label for="ph">Pan length</label><span class="hint" id="phHint">cm</span></div>
+          <div class="pair">
+            <input type="range" id="phR" min="8" max="100" step="0.5" value="40">
+            <input type="number" id="ph" min="8" max="100" step="0.5" value="40">
+          </div>
+        </div>
+        <div class="field">
+          <div class="top"><label for="pk">Rule of 2</label><span class="hint">divisor &middot; w &times; h &divide; this</span></div>
+          <input type="number" id="pk" min="1" max="4" step="0.05" value="2">
+        </div>
+        </div>
+
+        <div class="field">
+          <div class="top"><label for="w" id="wLabel">Weight per panetto</label><span class="hint" id="wHint">grams</span></div>
+          <input type="number" id="w" min="80" max="3000" step="1" value="264">
         </div>
       </fieldset>
 
@@ -444,7 +486,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       </div>
 
       <section class="stage">
-        <header><h2>Final dough</h2><span class="it">what ends up in the panetti</span>
+        <header><h2>Final dough</h2><span class="it" id="finalSub">what ends up in the panetti</span>
           <span class="meta" id="finalMeta"></span></header>
         <div class="tw"><table>
           <thead><tr><th>Component</th><th>Grams</th><th>% flour</th></tr></thead>
@@ -466,9 +508,13 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       </section>
 
       <footer class="note">
-        Panetto weight follows the rule of 22 — diameter in inches × 22 g — so a 12&Prime; pizza takes a
-        264 g ball. Change the grams-per-inch figure to run the same rule at a different thickness, or
-        type a weight directly to override it. Flour totals include the flour carried in by the starter, so the biga's stated hydration and the
+        <strong>Tonda</strong> follows the rule of 22 — diameter in inches × 22 g — so a 12&Prime; pizza
+        takes a 264 g ball. <strong>Teglia</strong> follows the Italian pan rule — width × length in
+        centimetres ÷ 2 — so a 30 × 40 cm teglia casalinga takes 600 g, and the standard American sheet
+        pans work out at 1,510 g full, 755 g half and 398 g quarter. Give the sides in inches and they are
+        converted to centimetres before the rule is applied. Change the grams-per-inch figure or the divisor to
+        run either rule at a different thickness, or type a weight directly to override it; a typed teglia weight
+        leaves the pan alone, since one number cannot back-solve two sides. Flour totals include the flour carried in by the starter, so the biga's stated hydration and the
         formula's total hydration both hold true once the starter is folded in. Salt and malt go into the
         rinfresco only — salt in the biga would slow the ferment. Baker's percentages are against
         <em>total</em> flour; the biga's own hydration is against biga flour.
@@ -497,7 +543,8 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 <script>
 (function(){
   "use strict";
-  var DEF = {n:20,d:12,k:22,w:264,h:65,salt:2.8,malt:0.5,bf:80,bh:45,st:250,tb:18,tk:2,ta:5,bake:""};
+  var DEF = {n:20,shape:0,d:12,k:22,pw:30,ph:40,pk:2,unit:0,w:264,
+             h:65,salt:2.8,malt:0.5,bf:80,bh:45,st:250,tb:18,tk:2,ta:5,bake:""};
   var KEYS = Object.keys(DEF);
   var S = {};
   var $ = function(id){ return document.getElementById(id); };
@@ -539,8 +586,17 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   function readStore(){
     try{ var s = localStorage.getItem("biga.v1"); return s ? JSON.parse(s) : {}; }catch(e){ return {}; }
   }
+  var ROUND_KEYS = ["d","k"], PAN_KEYS = ["pw","ph","pk","unit"];
+  function inPlay(k){
+    if(ROUND_KEYS.indexOf(k) >= 0) return !isPan();
+    if(PAN_KEYS.indexOf(k) >= 0) return isPan();
+    return true;
+  }
   function query(){
-    return KEYS.filter(function(k){ return k==="bake" ? !!S.bake : S[k]!==DEF[k]; })
+    return KEYS.filter(function(k){
+                 if(!inPlay(k)) return false;
+                 return k==="bake" ? !!S.bake : S[k]!==DEF[k];
+               })
                .map(function(k){ return k+"="+encodeURIComponent(S[k]); }).join("&");
   }
   function shareUrl(){
@@ -565,6 +621,55 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   }
   function gu(v){ return g(v)+" g"; }
   function pc(v){ return (v*100).toFixed(1)+"%"; }
+
+  /* ---------- shape ---------- */
+  /* Two ways to size a piece. Round: diameter × the rule of 22. Teglia: the
+     Italian pan rule, width × length in cm ÷ 2 — a 30 × 40 cm home teglia
+     takes 600 g. Pan sides are held in whichever unit they were entered in;
+     inches are converted to cm before the rule is applied. */
+  var IN = 2.54;
+  function isPan(){ return S.shape === 1; }
+  function panSide(v){ return S.unit ? v*IN : v; }
+  function panArea(){ return panSide(S.pw) * panSide(S.ph); }   // cm²
+  function pieceWeight(){ return isPan() ? panArea()/S.pk : S.d*S.k; }
+  function ruleWeight(){ return Math.round(pieceWeight()); }
+  function onRule(){ return Math.abs(S.w - pieceWeight()) < 0.75; }
+
+  function round2(v){ return Math.round(v * 100) / 100; }
+  function num(v){ return String(round2(v)); }
+  function unitMark(){ return S.unit ? "″" : " cm"; }
+  function panLabel(){ return num(S.pw) + " × " + num(S.ph) + unitMark(); }
+  function pieceWord(c){
+    return isPan() ? (c === 1 ? "teglia" : "teglie") : (c === 1 ? "panetto" : "panetti");
+  }
+  /* "30 × 40 cm at ÷2" / "12″ at 22 g/in", or the custom-weight note */
+  function sizeLine(){
+    if(isPan()) return panLabel() + (onRule() ? " at ÷" + S.pk : " (custom weight)");
+    return num(S.d) + "″" + (onRule() ? " at " + S.k + " g/in" : " (custom weight)");
+  }
+  /* the pdf's subset fonts carry no division sign, so this one spells the
+     rule with a slash — it is the only piece of shape text that reaches them */
+  function sizeTail(){
+    if(!onRule()) return isPan() ? "custom weight" : "custom ball weight";
+    return isPan() ? panLabel() + " at w × h / " + S.pk
+                   : num(S.d) + "″ pizze at " + S.k + " g per inch";
+  }
+  var BOLD  = function(s){ return "<b>" + s + "</b>"; };
+  var PLAIN = function(s){ return s; };
+  function staglioText(b){
+    var q = b(S.n + " × " + g(S.w) + " g");
+    return isPan()
+      ? "Divide into " + q + " panetti, one per " + panLabel() + " teglia. Round them loosely — a teglia dough wants to stay slack — and set them in an oiled box."
+      : "Divide into " + q + " panetti, round them tight, and set them in a proofing box with room to spread.";
+  }
+  function apprettoText(){
+    return isPan()
+      ? "Proof until each panetto is domed and airy. Then tip it into a well-oiled teglia, press it out to the corners with flat fingertips, and bake as hot as your oven goes."
+      : "Proof until each panetto is domed, slack and holds a slow dimple. Then open by hand and bake as hot as your oven goes.";
+  }
+  function staglioNote(){
+    return S.n + " × " + g(S.w) + " g" + (isPan() ? ", one per teglia" : " panetti");
+  }
 
   /* ---------- the math ---------- */
   function compute(){
@@ -632,8 +737,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     f += row("Malt", d.malt, pc(d.malt/F));
     f += row("Dough", d.W, pc(d.W/F), "sum");
     $("finalRows").innerHTML = f;
-    $("finalMeta").textContent = S.n+" × "+g(S.w)+" g panetti · "+(S.d % 1 ? S.d.toFixed(1) : S.d)+"″"
-                               + (onRule() ? " at "+S.k+" g/in" : " (custom weight)");
+    $("finalMeta").textContent = S.n+" × "+g(S.w)+" g "+pieceWord(S.n)+" · "+sizeLine();
   }
 
   function renderAlerts(d){
@@ -654,8 +758,8 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       ["Rinfresco", "Break the <b>"+gu(d.bigaMass)+"</b> of biga into <b>"+gu(Math.max(d.rWater,0))+"</b> of water, hold back a little to dissolve the salt. Add <b>"+gu(d.rFlour)+"</b> of flour and <b>"+gu(d.malt)+"</b> of malt, mix to a rough mass, rest 20 min."],
       ["Salt and develop", "Add <b>"+gu(d.salt)+"</b> of salt with the reserved water and mix until the dough clears the bowl and passes a windowpane. Keep the finish under 25 °C."],
       ["Bulk "+S.tk+" h", "Covered, at room temperature, with a fold at the halfway point if the dough feels slack."],
-      ["Staglio", "Divide into <b>"+S.n+" × "+g(S.w)+" g</b> panetti, round them tight, and set them in a proofing box with room to spread."],
-      ["Appretto "+S.ta+" h", "Proof until each panetto is domed, slack and holds a slow dimple. Then open by hand and bake as hot as your oven goes."]
+      ["Staglio", staglioText(BOLD)],
+      ["Appretto "+S.ta+" h", apprettoText()]
     ];
     $("method").innerHTML = steps.map(function(s){
       return "<li><h3>"+s[0]+"</h3><p>"+s[1]+"</p></li>";
@@ -679,7 +783,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       [refresh, "Refresh the starter", "so it peaks just as the biga is mixed", false],
       [bigaMix, "Impasto biga", "flour, water and starter only", false],
       [bulk, "Rinfresco", "remaining flour and water, then malt and salt", false],
-      [appretto, "Staglio", S.n+" panetti of "+g(S.w)+" g", false],
+      [appretto, "Staglio", staglioNote(), false],
       [t, "Into the oven", "", true]
     ];
     var dfT = new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit"});
@@ -695,8 +799,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 
   function recipeText(d){
     var L = [];
-    L.push("BIGA & RINFRESCO — "+S.n+" x "+g(S.w)+" g panetti"
-           +(onRule() ? "  ("+S.d+"\" at "+S.k+" g/in)" : "  (custom weight)"));
+    L.push("BIGA & RINFRESCO — "+S.n+" x "+g(S.w)+" g "+pieceWord(S.n)+"  ("+sizeTail()+")");
     L.push(S.h+"% hydration · "+S.bf+"% biga at "+S.bh+"% · salt "+S.salt+"% · malt "+S.malt+"%");
     L.push("");
     L.push("BIGA");
@@ -719,23 +822,55 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   }
 
   /* ---------- wiring ---------- */
-  var PAIRS = [["d","dR"],["h","hR"],["salt","saltR"],["malt","maltR"],["bf","bfR"],["bh","bhR"],
-               ["tb","tbR"],["tk","tkR"],["ta","taR"]];
+  var PAIRS = [["d","dR"],["pw","pwR"],["ph","phR"],["h","hR"],["salt","saltR"],["malt","maltR"],
+               ["bf","bfR"],["bh","bhR"],["tb","tbR"],["tk","tkR"],["ta","taR"]];
+  var SIDES = [["pw","pwR"],["ph","phR"]];
+  /* a hand-typed pan side stays inside these, in whichever unit is showing */
+  function sideLimits(){ return S.unit ? {lo:3, hi:40} : {lo:8, hi:100}; }
 
-  function ruleWeight(){ return Math.round(S.d * S.k); }
-  function onRule(){ return Math.abs(S.w - S.d*S.k) < 0.75; }
-
-  function syncSizes(){
-    document.querySelectorAll(".size").forEach(function(b){
-      var on = Number(b.dataset.d) === Number(S.d) && onRule();
-      b.setAttribute("aria-pressed", on ? "true" : "false");
+  function pressed(sel, hit){
+    document.querySelectorAll(sel).forEach(function(b){
+      b.setAttribute("aria-pressed", hit(b) ? "true" : "false");
     });
-    document.querySelectorAll(".size .g").forEach(function(s){
+  }
+
+  function syncShape(){
+    var pan = isPan();
+    $("roundFields").hidden = pan;
+    $("panFields").hidden = !pan;
+    $("nLabel").textContent = pan ? "Teglie (pans)" : "Panetti (dough balls)";
+    $("wLabel").textContent = pan ? "Weight per teglia" : "Weight per panetto";
+    $("pwHint").textContent = $("phHint").textContent = S.unit ? "inches" : "cm";
+    $("finalSub").textContent = pan ? "what goes into each teglia" : "what ends up in the panetti";
+
+    pressed(".shapes .size", function(b){ return Number(b.dataset.shape) === S.shape; });
+    pressed(".sizes .size", function(b){
+      return !pan && Number(b.dataset.d) === Number(S.d) && onRule();
+    });
+    pressed(".units .size", function(b){ return Number(b.dataset.unit) === S.unit; });
+    pressed(".pans .size", function(b){
+      return pan && onRule() && Number(b.dataset.unit) === S.unit
+          && Number(b.dataset.w) === Number(S.pw) && Number(b.dataset.h) === Number(S.ph);
+    });
+
+    document.querySelectorAll(".sizes .size .g").forEach(function(s){
       s.textContent = Math.round(Number(s.dataset.g) * S.k) + " g";
     });
-    $("wHint").innerHTML = onRule()
-      ? "= " + (S.d % 1 ? S.d.toFixed(1) : S.d) + "&Prime; × " + S.k + " g"
-      : "custom · " + (S.w / S.k).toFixed(1) + "&Prime; at " + S.k + " g/in";
+    document.querySelectorAll(".pans .size .g").forEach(function(s){
+      var b = s.parentNode, u = Number(b.dataset.unit) ? IN : 1;
+      s.textContent = Math.round(Number(b.dataset.w)*u * Number(b.dataset.h)*u / S.pk) + " g";
+    });
+
+    var lim = sideLimits();
+    SIDES.forEach(function(q){
+      q.forEach(function(id){ $(id).min = lim.lo; $(id).max = lim.hi; });
+    });
+
+    $("wHint").innerHTML = pan
+      ? (onRule() ? "= " + num(S.pw) + " × " + num(S.ph) + (S.unit ? "&Prime;" : " cm") + " ÷ " + S.pk
+                  : "custom · " + panLabel() + " would make " + ruleWeight() + " g")
+      : (onRule() ? "= " + num(S.d) + "&Prime; × " + S.k + " g"
+                  : "custom · " + (S.w / S.k).toFixed(1) + "&Prime; at " + S.k + " g/in");
   }
 
   function syncInputs(){
@@ -745,7 +880,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     });
     PAIRS.forEach(function(p){ var r = $(p[1]); if(r) r.value = S[p[0]]; });
     $("hOut").textContent = Number(S.h).toFixed(1)+" %";
-    syncSizes();
+    syncShape();
   }
 
   function render(){
@@ -774,8 +909,14 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       if(pair) $(pair[1]).value = S[k];
       if(k==="h") $("hOut").textContent = Number(S.h).toFixed(1)+" %";
       if(k==="d" || k==="k"){ S.w = ruleWeight(); $("w").value = S.w; if(k==="d") $("dR").value = S.d; }
-      if(k==="w" && S.k > 0){ S.d = Math.round((S.w / S.k) * 2) / 2; $("d").value = S.d; $("dR").value = S.d; }
-      syncSizes();
+      if(k==="pw" || k==="ph" || k==="pk"){
+        S.w = ruleWeight(); $("w").value = S.w;
+        if(k!=="pk") $(k+"R").value = S[k];
+      }
+      // one number cannot back-solve two pan sides, so a typed teglia weight
+      // just becomes a custom weight and the sides stay put
+      if(k==="w" && !isPan() && S.k > 0){ S.d = Math.round((S.w / S.k) * 2) / 2; $("d").value = S.d; $("dR").value = S.d; }
+      syncShape();
       render(); persist();
     });
     el.addEventListener("change", function(){ if(k!=="bake"){ var v=parseFloat(el.value); if(isFinite(v)) S[k]=clamp(el,v); } update(); });
@@ -785,14 +926,50 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     var r = $(p[1]);
     r.addEventListener("input", function(){
       S[p[0]] = parseFloat(r.value);
-      if(p[0] === "d") S.w = ruleWeight();
+      if(p[0] === "d" || p[0] === "pw" || p[0] === "ph") S.w = ruleWeight();
       update();
     });
   });
 
-  document.querySelectorAll(".size").forEach(function(b){
+  document.querySelectorAll(".sizes .size").forEach(function(b){
     b.addEventListener("click", function(){
       S.d = Number(b.dataset.d); S.w = ruleWeight(); update();
+    });
+  });
+
+  document.querySelectorAll(".shapes .size").forEach(function(b){
+    b.addEventListener("click", function(){
+      S.shape = Number(b.dataset.shape); S.w = ruleWeight(); update();
+    });
+  });
+
+  // a preset carries its own native unit, so the stated sides stay exact:
+  // 30 x 40 cm is 600 g on the nose, 13 x 18" is 755 g
+  document.querySelectorAll(".pans .size").forEach(function(b){
+    b.addEventListener("click", function(){
+      S.shape = 1;
+      S.unit = Number(b.dataset.unit);
+      S.pw = Number(b.dataset.w);
+      S.ph = Number(b.dataset.h);
+      S.w = ruleWeight();
+      update();
+    });
+  });
+
+  // switching units converts what is already there, so the pan keeps its size
+  document.querySelectorAll(".units .size").forEach(function(b){
+    b.addEventListener("click", function(){
+      var u = Number(b.dataset.unit);
+      if(u !== S.unit){
+        var f = u ? 1/IN : IN;
+        S.unit = u;
+        var lim = sideLimits();
+        ["pw","ph"].forEach(function(id){
+          S[id] = Math.min(Math.max(round2(S[id]*f), lim.lo), lim.hi);
+        });
+        S.w = ruleWeight();
+      }
+      update();
     });
   });
 
@@ -864,7 +1041,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     function rule(x,yy,w,c,h){ bar(x,yy,w,h||0.2,c); }
     function vline(x,y0,y1,c){ doc.setDrawColor(c[0],c[1],c[2]); doc.setLineWidth(0.2); doc.line(x,y0,x,y1); }
 
-    var foot = S.n + " × " + g(S.w) + " g panetti  ·  " + Number(S.h).toFixed(1) + "% hydration  ·  "
+    var foot = S.n + " × " + g(S.w) + " g " + pieceWord(S.n) + "  ·  " + Number(S.h).toFixed(1) + "% hydration  ·  "
              + S.bf + "% biga at " + Number(S.bh).toFixed(1) + "%";
 
     function footer(){
@@ -890,8 +1067,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         PW - MR, y, {align:"right"});
     y += 6.6;
     fnt("Plex","normal",9.6,C.mid);
-    txt(S.n + " panetti of " + g(S.w) + " g" + (onRule() ? "  —  " + (S.d % 1 ? S.d.toFixed(1) : S.d)
-        + "″ pizze at " + S.k + " g per inch" : "  —  custom ball weight"), ML, y);
+    txt(S.n + " " + pieceWord(S.n) + " of " + g(S.w) + " g  —  " + sizeTail(), ML, y);
     y += 4.2;
     rule(ML, y, CW, C.ink, 0.7); y += 0.7;
 
@@ -995,13 +1171,13 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       y += 7.6;
     }
 
-    heading("Final dough", "what ends up in the panetti");
+    heading("Final dough", isPan() ? "what goes into each teglia" : "what ends up in the panetti");
     y = drawTable(ML, CW, y, [
       {label:"Flour", grams:g(d.F), pct:"100.0%"},
       {label:"Water", grams:g(d.Wt), pct:pc(d.Wt/F)},
       {label:"Salt", grams:g(d.salt), pct:pc(d.salt/F)},
       {label:"Malt", grams:g(d.malt), pct:pc(d.malt/F)},
-      {label:S.n + " panetti of " + g(S.w) + " g", grams:g(d.W), pct:pc(d.W/F), kind:"sum"}
+      {label:S.n + " " + pieceWord(S.n) + " of " + g(S.w) + " g", grams:g(d.W), pct:pc(d.W/F), kind:"sum"}
     ]) + 10;
 
     /* ---- method ---- */
@@ -1018,8 +1194,8 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         + gu(d.malt) + " of malt, mix to a rough mass, rest 20 minutes."],
       ["Salt and develop", "Add " + gu(d.salt) + " of salt with the reserved water and mix until the dough clears the bowl and passes a windowpane. Keep the finish under 25 °C."],
       ["Bulk " + S.tk + " h", "Covered, at room temperature, with a fold at the halfway point if the dough feels slack."],
-      ["Staglio", "Divide into " + S.n + " × " + g(S.w) + " g panetti, round them tight, and set them in a proofing box with room to spread."],
-      ["Appretto " + S.ta + " h", "Proof until each panetto is domed, slack and holds a slow dimple. Then open by hand and bake as hot as your oven goes."]
+      ["Staglio", staglioText(PLAIN)],
+      ["Appretto " + S.ta + " h", apprettoText()]
     ];
     steps.forEach(function(s,i){
       fnt("Plex","normal",8.6);
@@ -1051,7 +1227,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         [refresh, "Refresh the starter", "so it peaks as the biga is mixed", 0],
         [bigaMix, "Impasto biga", "flour, water and starter only", 0],
         [bulk, "Rinfresco", "remaining flour and water, then malt and salt", 0],
-        [appretto, "Staglio", S.n + " panetti of " + g(S.w) + " g", 0],
+        [appretto, "Staglio", staglioNote(), 0],
         [t, "Into the oven", "", 1]
       ];
       rows.forEach(function(r){
@@ -1154,8 +1330,10 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     if(k === "bake") return;
     if(typeof S[k] !== "number" || !isFinite(S[k])) S[k] = DEF[k];
   });
+  S.shape = S.shape === 1 ? 1 : 0;
+  S.unit  = S.unit  === 1 ? 1 : 0;
   // settings saved before the rule of 22 carry a weight but no diameter
-  if(!("d" in stored) && !("d" in hashed) && S.k > 0) S.d = Math.round((S.w / S.k) * 2) / 2;
+  if(!isPan() && !("d" in stored) && !("d" in hashed) && S.k > 0) S.d = Math.round((S.w / S.k) * 2) / 2;
   if(!S.bake) S.bake = defaultBake();
   update();
 })();
