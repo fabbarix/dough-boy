@@ -16,7 +16,8 @@ want — a round panetto, or a teglia sized by the Italian pan rule.
 - **Teglia — the Italian pan rule.** Width × length in centimetres ÷ 2, so a 30 × 40 cm *teglia
   casalinga* takes 600 g. Presets cover the two Italian sizes (30 × 40, 40 × 60) and the American sheet
   pans — full 18 × 26″ at 1,510 g, half 13 × 18″ at 755 g, quarter 9.5 × 13″ at 398 g, eighth
-  6.5 × 9.5″ at 199 g. Sides can be given in centimetres or inches; inches are converted before the rule
+  6.5 × 9.5″ at 199 g. Round pans use the same rule on their area, π·r², so 12, 14 and 16″ pans
+  take 365, 497 and 649 g. Sides can be given in centimetres or inches; inches are converted before the rule
   is applied, and the divisor is editable for a thicker or thinner pan. Typing a weight overrides the rule
   and leaves the pan alone — one number cannot back-solve two sides.
 - **Each shape keeps its own batch count** — 20 panetti, 2 teglie — so switching between them does
@@ -29,7 +30,7 @@ want — a round panetto, or a teglia sized by the Italian pan rule.
 - **Salt and malt go into the rinfresco only** — salt in the biga would slow the ferment.
 - Warnings appear when the starter dose or a biga hydration makes a component go negative.
 - **Method and timetable follow the shape** — a tonda is opened by hand, a teglia is tipped into an oiled
-  pan and pressed to the corners.
+  pan and pressed to the corners (or the rim of a round pan).
 - **Timetable** counts back from the bake time through appretto, staglio, bulk, rinfresco and the biga.
 - **Share link** writes every setting into the address as query parameters, and every setting — shape,
   pan, unit, counts and formula — is remembered in `localStorage` for the next visit.
@@ -43,6 +44,7 @@ Each piece is sized by its own rule, and everything else follows from `n` pieces
 ```
 tonda    weight = diameter(in) × 22          12″          -> 264 g
 teglia   weight = w(cm) × h(cm) / 2          30 × 40 cm   -> 600 g
+round    weight = π·(d(cm)/2)² / 2           12″          -> 365 g
 ```
 
 With total dough `W`, hydration `H`, salt `S`, malt `M` (fractions of total flour), biga flour share
