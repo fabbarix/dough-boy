@@ -575,7 +575,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     String(str).replace(/^[?#]/,"").split("&").forEach(function(kv){
       var i = kv.indexOf("="); if(i<0) return;
       var k = decodeURIComponent(kv.slice(0,i)), v = decodeURIComponent(kv.slice(i+1).replace(/\+/g," "));
-      if(KEYS.indexOf(k)<0) return;
+      if(KEYS.indexOf(k)<0 && k!=="st") return;   // st: legacy starter grams
       out[k] = (k==="bake") ? v : parseFloat(v);
     });
     return out;
@@ -1371,6 +1371,16 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   S.unit  = S.unit  === 1 ? 1 : 0;
   // settings saved before the rule of 22 carry a weight but no diameter
   if(!isPan() && !("d" in stored) && !("d" in hashed) && S.k > 0) S.d = Math.round((S.w / S.k) * 2) / 2;
+  // settings saved before the starter became a percentage carry its weight in grams as `st`:
+  // turn it into a share of this recipe's flour, held to the slider's range
+  var legacySt = ("sp" in hashed) ? null : ("st" in hashed) ? hashed.st
+               : ("sp" in stored) ? null : ("st" in stored) ? stored.st : null;
+  delete S.st;
+  if(typeof legacySt === "number" && isFinite(legacySt)){
+    var F0 = count() * S.w / (1 + S.h/100 + S.salt/100 + S.malt/100);
+    var spEl = $("sp"), lo = parseFloat(spEl.min), hi = parseFloat(spEl.max);
+    if(F0 > 0) S.sp = Math.min(hi, Math.max(lo, Math.round(legacySt / F0 * 100)));
+  }
   if(!S.bake) S.bake = defaultBake();
   update();
 })();
