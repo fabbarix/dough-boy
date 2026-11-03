@@ -22,11 +22,12 @@ want — a round panetto, or a teglia sized by the Italian pan rule.
 - **Each shape keeps its own batch count** — 20 panetti, 2 teglie — so switching between them does
   not ask for 20 sheet pans of dough.
 - **Total hydration, salt and malt** are baker's percentages against *total* flour.
-- **The biga** takes a chosen share of the flour at its own hydration. The starter's flour and water
-  are counted *inside* the biga's totals, so both the biga's stated hydration and the formula's total
-  hydration hold true once it is folded in.
+- **The biga** takes a chosen share of the flour at its own hydration.
+- **The starter** is dosed as a baker's percentage of total flour (5-50 %, 20 % by default) at 100 %
+  hydration. Its flour and water are counted *inside* the biga's totals, so both the biga's stated
+  hydration and the formula's total hydration hold true once it is folded in.
 - **Salt and malt go into the rinfresco only** — salt in the biga would slow the ferment.
-- Warnings appear when a starter weight or a biga hydration makes a component go negative.
+- Warnings appear when the starter dose or a biga hydration makes a component go negative.
 - **Method and timetable follow the shape** — a tonda is opened by hand, a teglia is tipped into an oiled
   pan and pressed to the corners.
 - **Timetable** counts back from the bake time through appretto, staglio, bulk, rinfresco and the biga.
@@ -45,14 +46,15 @@ teglia   weight = w(cm) × h(cm) / 2          30 × 40 cm   -> 600 g
 ```
 
 With total dough `W`, hydration `H`, salt `S`, malt `M` (fractions of total flour), biga flour share
-`B`, biga hydration `Hb`, and `G` grams of 100 % hydration starter:
+`B`, biga hydration `Hb`, and starter at `P` of total flour (100 % hydration):
 
 ```
 F        = W / (1 + H + S + M)      total flour, starter flour included
 water    = F·H      salt = F·S      malt = F·M
+starter  = P·F                      carrying P·F/2 flour and P·F/2 water
 
 biga flour = B·F                    biga water = Hb·B·F
-  add flour = B·F  − G/2              add water = Hb·B·F − G/2
+  add flour = B·F − P·F/2             add water = Hb·B·F − P·F/2
 
 rinfresco flour = (1−B)·F           rinfresco water = F·H − Hb·B·F
 ```

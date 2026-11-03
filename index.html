@@ -411,8 +411,11 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
           </div>
         </div>
         <div class="field">
-          <div class="top"><label for="st">Starter, 100&nbsp;% hydration</label><span class="hint">grams</span></div>
-          <input type="number" id="st" min="0" max="5000" step="5" value="250">
+          <div class="top"><label for="sp">Starter, 100&nbsp;% hydration</label><span class="hint">% of total flour</span></div>
+          <div class="pair">
+            <input type="range" id="spR" min="5" max="50" step="1" value="20">
+            <input type="number" id="sp" min="5" max="50" step="1" value="20">
+          </div>
         </div>
       </fieldset>
 
@@ -518,7 +521,10 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         pans work out at 1,510 g full, 755 g half and 398 g quarter. Give the sides in inches and they are
         converted to centimetres before the rule is applied. Change the grams-per-inch figure or the divisor to
         run either rule at a different thickness, or type a weight directly to override it; a typed teglia weight
-        leaves the pan alone, since one number cannot back-solve two sides. Flour totals include the flour carried in by the starter, so the biga's stated hydration and the
+        leaves the pan alone, since one number cannot back-solve two sides. The <strong>starter</strong> is dosed
+        as a baker's percentage of total flour — 20&nbsp;% of 3 kg of flour is 600 g of starter, half of it
+        flour and half water at 100&nbsp;% hydration. Flour totals include the flour carried in by the
+        starter, so the biga's stated hydration and the
         formula's total hydration both hold true once the starter is folded in. Salt and malt go into the
         rinfresco only — salt in the biga would slow the ferment. Baker's percentages are against
         <em>total</em> flour; the biga's own hydration is against biga flour.
@@ -548,7 +554,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 (function(){
   "use strict";
   var DEF = {n:20,shape:0,d:12,k:22,pn:2,pw:30,ph:40,pk:2,unit:0,w:264,
-             h:65,salt:2.8,malt:0.5,bf:80,bh:45,st:250,tb:18,tk:2,ta:5,bake:""};
+             h:65,salt:2.8,malt:0.5,bf:80,bh:45,sp:20,tb:18,tk:2,ta:5,bake:""};
   var KEYS = Object.keys(DEF);
   var S = {};
   var $ = function(id){ return document.getElementById(id); };
@@ -700,7 +706,8 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     var Wt = F*H, salt = F*SA, malt = F*MA;
 
     var bFlour = B*F, bWater = HB*bFlour;      // biga totals, starter included
-    var sf = S.st/2, sw = S.st/2;              // 100% hydration starter
+    var starter = (S.sp/100) * F;              // starter weight, baker's % of total flour
+    var sf = starter/2, sw = starter/2;        // 100% hydration starter
     var bAddF = bFlour - sf, bAddW = bWater - sw;
     var bigaMass = bFlour + bWater;
 
@@ -709,8 +716,8 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     return {W:W,F:F,Wt:Wt,salt:salt,malt:malt,
             noRinfFlour: rFlour < 0.05,   // 100% biga: nothing left to refresh with
             bFlour:bFlour,bWater:bWater,bAddF:bAddF,bAddW:bAddW,bigaMass:bigaMass,
-            sf:sf,sw:sw,rFlour:rFlour,rWater:rWater,
-            starterPctBiga: bFlour>0 ? S.st/bFlour : 0,
+            sf:sf,sw:sw,rFlour:rFlour,rWater:rWater,starter:starter,
+            starterPctBiga: bFlour>0 ? starter/bFlour : 0,
             finalMass: bigaMass + rFlour + rWater + salt + malt};
   }
 
@@ -731,7 +738,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     var b = "";
     b += row("Flour <span class=\"tag b\">add</span>", d.bAddF, pc(d.bAddF/F));
     b += row("Water <span class=\"tag b\">add</span>", d.bAddW, pc(d.bAddW/F));
-    b += row("Sourdough starter", S.st, pc(S.st/F), "starter");
+    b += row("Sourdough starter", d.starter, pc(d.starter/F), "starter");
     b += row("<em>&nbsp;&nbsp;· flour from starter</em>", d.sf, pc(d.sf/F), "starter");
     b += row("<em>&nbsp;&nbsp;· water from starter</em>", d.sw, pc(d.sw/F), "starter");
     b += row("Biga total", d.bigaMass, pc(d.bigaMass/F), "sum");
@@ -774,7 +781,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 
   function renderMethod(d){
     var steps = [
-      ["Mix the biga", "Break <b>"+gu(S.st)+"</b> of starter into <b>"+gu(Math.max(d.bAddW,0))+"</b> of cool water, then rub in <b>"+gu(Math.max(d.bAddF,0))+"</b> of flour until every crumb is damp. Shaggy, not smooth — a stiff biga at "+S.bh+"% is meant to look under-mixed."],
+      ["Mix the biga", "Break <b>"+gu(d.starter)+"</b> of starter into <b>"+gu(Math.max(d.bAddW,0))+"</b> of cool water, then rub in <b>"+gu(Math.max(d.bAddF,0))+"</b> of flour until every crumb is damp. Shaggy, not smooth — a stiff biga at "+S.bh+"% is meant to look under-mixed."],
       ["Ferment "+S.tb+" h", "Cover loosely and hold at 16–18 °C. It is ready when it smells of yogurt and hazelnut and has roughly doubled; a warmer room shortens this considerably."],
       ["Rinfresco", "Break the <b>"+gu(d.bigaMass)+"</b> of biga into <b>"+gu(Math.max(d.rWater,0))+"</b> of water, hold back a little to dissolve the salt. "+rinfAdd(BOLD,d)+", mix to a rough mass, rest 20 min."],
       ["Salt and develop", "Add <b>"+gu(d.salt)+"</b> of salt with the reserved water and mix until the dough clears the bowl and passes a windowpane. Keep the finish under 25 °C."],
@@ -821,12 +828,12 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   function recipeText(d){
     var L = [];
     L.push("BIGA & RINFRESCO — "+count()+" x "+g(S.w)+" g "+pieceWord(count())+"  ("+sizeTail()+")");
-    L.push(S.h+"% hydration · "+S.bf+"% biga at "+S.bh+"% · salt "+S.salt+"% · malt "+S.malt+"%");
+    L.push(S.h+"% hydration · "+S.bf+"% biga at "+S.bh+"% · starter "+S.sp+"% · salt "+S.salt+"% · malt "+S.malt+"%");
     L.push("");
     L.push("BIGA");
     L.push("  flour            "+gu(d.bAddF));
     L.push("  water            "+gu(d.bAddW));
-    L.push("  starter (100%)   "+gu(S.st));
+    L.push("  starter (100%)   "+gu(d.starter)+"   ("+S.sp+"% of flour)");
     L.push("  = biga           "+gu(d.bigaMass));
     L.push("");
     L.push("RINFRESCO");
@@ -844,7 +851,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 
   /* ---------- wiring ---------- */
   var PAIRS = [["d","dR"],["pw","pwR"],["ph","phR"],["h","hR"],["salt","saltR"],["malt","maltR"],
-               ["bf","bfR"],["bh","bhR"],["tb","tbR"],["tk","tkR"],["ta","taR"]];
+               ["bf","bfR"],["bh","bhR"],["sp","spR"],["tb","tbR"],["tk","tkR"],["ta","taR"]];
   var SIDES = [["pw","pwR"],["ph","phR"]];
   /* a hand-typed pan side stays inside these, in whichever unit is showing */
   function sideLimits(){ return S.unit ? {lo:3, hi:40} : {lo:8, hi:100}; }
@@ -1112,7 +1119,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 
     fnt("PlexMono","normal",7.5,C.mid);
     txt("hydration " + Number(S.h).toFixed(1) + "%   ·   biga " + S.bf + "% of the flour at "
-        + Number(S.bh).toFixed(1) + "%   ·   starter " + g(S.st) + " g at 100%   ·   salt "
+        + Number(S.bh).toFixed(1) + "%   ·   starter " + S.sp + "% of flour at 100%   ·   salt "
         + Number(S.salt).toFixed(2) + "%   ·   malt " + Number(S.malt).toFixed(2) + "%", ML, y);
     y += 9;
 
@@ -1171,7 +1178,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     var bigaRows = [
       {label:"Flour", grams:g(d.bAddF), pct:pc(d.bAddF/F)},
       {label:"Water", grams:g(d.bAddW), pct:pc(d.bAddW/F)},
-      {label:"Sourdough starter", grams:g(S.st), pct:pc(S.st/F)},
+      {label:"Sourdough starter", grams:g(d.starter), pct:pc(d.starter/F)},
       {label:"flour from the starter", grams:g(d.sf), pct:pc(d.sf/F), kind:"sub"},
       {label:"water from the starter", grams:g(d.sw), pct:pc(d.sw/F), kind:"sub"},
       {label:"Biga total", grams:g(d.bigaMass), pct:pc(d.bigaMass/F), kind:"sum"}
@@ -1214,7 +1221,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     nextPage();
     heading("Method", "in order, with this batch's weights");
     var steps = [
-      ["Mix the biga", "Break " + gu(S.st) + " of starter into " + gu(Math.max(d.bAddW,0))
+      ["Mix the biga", "Break " + gu(d.starter) + " of starter into " + gu(Math.max(d.bAddW,0))
         + " of cool water, then rub in " + gu(Math.max(d.bAddF,0))
         + " of flour until every crumb is damp. Shaggy, not smooth — a stiff biga at "
         + S.bh + "% is meant to look under-mixed."],
