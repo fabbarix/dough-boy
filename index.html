@@ -36,6 +36,7 @@
   --focus:#2645C4;
   --shadow:0 1px 2px rgba(18,22,31,.05), 0 8px 24px -16px rgba(18,22,31,.28);
   --r:10px;
+  --sp-1:6px; --sp-2:12px; --sp-3:18px;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
   --cond:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
@@ -120,8 +121,8 @@ legend{
   font-family:var(--cond);font-weight:700;font-size:11.5px;letter-spacing:.15em;
   text-transform:uppercase;color:var(--muted-solid);padding:0;
 }
-.field{display:grid;gap:5px;margin-top:12px}
-.field:first-of-type{margin-top:10px}
+.field{display:grid;gap:var(--sp-1);margin-top:var(--sp-2)}
+fieldset>legend+*{margin-top:10px}
 .field .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 label{font-size:13px;color:var(--ink)}
 .hint{font-size:11.5px;color:var(--muted-solid);font-family:var(--cond);letter-spacing:.02em}
@@ -152,7 +153,7 @@ input[type="range"]::-moz-range-thumb{
 }
 .sizes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
 .shapes,.units,.pantype{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
-.envs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:7px 0 2px}
+.envs{display:grid;grid-template-columns:92px 92px;justify-content:start;gap:6px;margin:7px 0 2px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .row2 .field{margin-top:0}
 .pans{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
@@ -163,6 +164,26 @@ input[type="range"]::-moz-range-thumb{
   background:var(--surface-2);color:var(--muted-solid);
   border:1px solid var(--line-strong);
 }
+details.more{margin-top:var(--sp-3);border-top:1px solid var(--line)}
+details.more>summary{
+  list-style:none;cursor:pointer;
+  display:grid;grid-template-columns:1fr auto;gap:1px 10px;align-items:baseline;padding:10px 0;
+  font-family:var(--cond);font-weight:600;font-size:12.5px;letter-spacing:.01em;color:var(--muted-solid);
+}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::after{content:"+";grid-column:2;grid-row:1;font-family:var(--mono);font-size:14px;line-height:1}
+details.more[open]>summary::after{content:"\2212"}
+details.more>summary:hover{color:var(--ink)}
+details.more>summary:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:4px}
+.more-label{grid-column:1;grid-row:1}
+.more-sum{grid-column:1;grid-row:2;font-family:var(--mono);font-weight:400;font-size:11.5px;color:var(--muted-solid);font-variant-numeric:tabular-nums}
+details.more[open] .more-sum{display:none}
+.more-body>:first-child{margin-top:4px}
+fieldset.all-more>details.more{margin-top:4px;border-top:0}
+summary[data-dirty] .more-label::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--rinf);margin-right:7px;vertical-align:1px}
+.derived{display:grid;grid-template-columns:1fr auto;gap:2px 10px;margin-top:var(--sp-2);padding:8px 10px;border:1px dashed var(--line-strong);border-radius:7px}
+.derived b{font-family:var(--mono);font-weight:500;font-variant-numeric:tabular-nums}
+.derived .hint{grid-column:1/-1}
 .cup{display:block;font-family:var(--cond);font-size:10.5px;font-weight:400;color:var(--muted-solid);letter-spacing:.01em}
 .size .g{display:block;font-family:var(--mono);font-size:10.5px;font-weight:400;opacity:.8}
 .size[aria-pressed="true"]{background:var(--biga);border-color:var(--biga);color:var(--surface)}
@@ -174,7 +195,7 @@ input[type="range"]::-moz-range-thumb{
   background:var(--surface-2);color:var(--ink);
 }
 .btn.primary{background:var(--ink);border-color:var(--ink);color:var(--bg)}
-.btn.quiet{background:transparent;border-color:transparent;color:var(--muted-solid);font-size:12px;padding:4px}
+.btn.quiet{background:transparent;border-color:transparent;color:var(--muted-solid);font-size:12px;padding:9px 10px}
 .btn:hover{border-color:var(--focus)}
 #copyOut{
   display:block;width:calc(100% - 36px);margin:10px 18px 4px;height:120px;
@@ -328,10 +349,6 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
             <input type="number" id="d" min="6" max="24" step="0.5" value="12">
           </div>
         </div>
-        <div class="field">
-          <div class="top"><label for="k">Rule of 22</label><span class="hint">grams per inch</span></div>
-          <input type="number" id="k" min="12" max="36" step="0.5" value="22">
-        </div>
         </div>
 
         <div id="panFields" hidden>
@@ -352,6 +369,22 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
           <button type="button" class="size" data-pc="1" data-w="14" data-unit="1">14&Prime; round<span class="g"></span></button>
           <button type="button" class="size" data-pc="1" data-w="16" data-unit="1">16&Prime; round<span class="g"></span></button>
         </div>
+        </div>
+
+        <div class="field">
+          <div class="top"><label for="w" id="wLabel">Weight per panetto</label><span class="hint" id="wHint">grams</span></div>
+          <input type="number" id="w" min="80" max="3000" step="1" value="264">
+        </div>
+        <details class="more" id="moreBatch">
+          <summary><span class="more-label">Sizing rule</span><span class="more-sum" id="sumBatch"></span></summary>
+          <div class="more-body">
+            <div id="roundMore">
+        <div class="field">
+          <div class="top"><label for="k">Rule of 22</label><span class="hint">grams per inch</span></div>
+          <input type="number" id="k" min="12" max="36" step="0.5" value="22">
+        </div>
+            </div>
+            <div id="panMore" hidden>
         <div class="pantype" role="group" aria-label="Pan shape">
           <button type="button" class="size" data-pc="0">Rectangular</button>
           <button type="button" class="size" data-pc="1">Round</button>
@@ -378,12 +411,9 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
           <div class="top"><label for="pk">Rule of 2</label><span class="hint">divisor &middot; area in cm&sup2; &divide; this</span></div>
           <input type="number" id="pk" min="1" max="4" step="0.05" value="2">
         </div>
-        </div>
-
-        <div class="field">
-          <div class="top"><label for="w" id="wLabel">Weight per panetto</label><span class="hint" id="wHint">grams</span></div>
-          <input type="number" id="w" min="80" max="3000" step="1" value="264">
-        </div>
+            </div>
+          </div>
+        </details>
       </fieldset>
 
       <fieldset>
@@ -395,6 +425,9 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
             <input type="number" id="h" min="45" max="95" step="0.5" value="65">
           </div>
         </div>
+        <details class="more" id="moreFormula">
+          <summary><span class="more-label">Salt &amp; malt</span><span class="more-sum" id="sumFormula"></span></summary>
+          <div class="more-body">
         <div class="field">
           <div class="top"><label for="salt">Salt</label><span class="hint">% of total flour</span></div>
           <div class="pair">
@@ -409,10 +442,15 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
             <input type="number" id="malt" min="0" max="2" step="0.05" value="0.5">
           </div>
         </div>
+          </div>
+        </details>
       </fieldset>
 
-      <fieldset>
+      <fieldset class="all-more">
         <legend>Biga</legend>
+        <details class="more" id="moreBiga">
+          <summary><span class="more-label">Biga formula</span><span class="more-sum" id="sumBiga"></span></summary>
+          <div class="more-body">
         <div class="field">
           <div class="top"><label for="bf">Flour in the biga</label><span class="hint">% of total flour</span></div>
           <div class="pair">
@@ -434,6 +472,8 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
             <input type="number" id="sp" min="5" max="50" step="1" value="20">
           </div>
         </div>
+          </div>
+        </details>
       </fieldset>
 
       <fieldset>
@@ -442,50 +482,19 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
           <div class="top"><label for="bake">Into the oven</label></div>
           <input type="datetime-local" id="bake">
         </div>
-        <div class="row2">
-          <div class="field">
-            <div class="top"><label for="troom">Room</label><span class="hint deg">&deg;C</span></div>
-            <input type="number" id="troom" min="5" max="35" step="0.5" value="24">
-          </div>
-          <div class="field">
-            <div class="top"><label for="tfridge">Fridge</label><span class="hint deg">&deg;C</span></div>
-            <input type="number" id="tfridge" min="0" max="18" step="0.5" value="4">
-          </div>
-        </div>
-        <div class="row2">
-          <div class="field">
-            <div class="top"><label for="tflour">Flour</label><span class="hint deg">&deg;C</span></div>
-            <input type="number" id="tflour" min="0" max="35" step="0.5" value="24">
-          </div>
-          <div class="field">
-            <div class="top"><label for="r55">Rule of 55</label><span class="hint">sums to</span></div>
-            <input type="number" id="r55" min="45" max="65" step="0.5" value="55">
-          </div>
-        </div>
         <div class="field">
-          <div class="top"><label for="twater">Water for the impasto</label><span class="hint" id="twaterHint">&deg;C</span></div>
-          <input type="number" id="twater" readonly tabindex="-1" aria-readonly="true" value="19">
+          <div class="top"><label for="troom">Room</label><span class="hint deg">&deg;C</span></div>
+          <input type="number" id="troom" min="5" max="35" step="0.5" value="24">
         </div>
-        <div class="row2">
-          <div class="field">
-            <div class="top"><label for="tdb">Biga mixed at</label><span class="hint deg">&deg;C</span></div>
-            <input type="number" id="tdb" min="5" max="35" step="0.5" value="18">
-          </div>
-          <div class="field">
-            <div class="top"><label for="tdf">Dough mixed at</label><span class="hint deg">&deg;C</span></div>
-            <input type="number" id="tdf" min="10" max="35" step="0.5" value="24">
-          </div>
-        </div>
-
+        <p class="derived">
+          <span>Water for the impasto</span><b id="twater">19</b>
+          <span class="hint" id="twaterHint">&deg;C</span>
+        </p>
         <div class="field">
           <div class="top"><label for="tb">Biga ferment</label><span class="hint" id="tbHint">hours</span></div>
           <div class="envs" role="group" aria-label="Where the biga ferments">
             <button type="button" class="size" data-env="envb" data-v="0">Room</button>
             <button type="button" class="size" data-env="envb" data-v="1">Fridge</button>
-          </div>
-          <div class="pair">
-            <input type="range" id="tbR" min="2" max="72" step="0.5" value="18">
-            <input type="number" id="tb" min="1" max="200" step="0.5" value="18">
           </div>
         </div>
         <div class="field">
@@ -494,10 +503,6 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
             <button type="button" class="size" data-env="envk" data-v="0">Room</button>
             <button type="button" class="size" data-env="envk" data-v="1">Fridge</button>
           </div>
-          <div class="pair">
-            <input type="range" id="tkR" min="0.5" max="36" step="0.5" value="2">
-            <input type="number" id="tk" min="0" max="200" step="0.5" value="2">
-          </div>
         </div>
         <div class="field">
           <div class="top"><label for="ta">Appretto (balls)</label><span class="hint" id="taHint">hours</span></div>
@@ -505,11 +510,57 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
             <button type="button" class="size" data-env="enva" data-v="0">Room</button>
             <button type="button" class="size" data-env="enva" data-v="1">Fridge</button>
           </div>
-          <div class="pair">
-            <input type="range" id="taR" min="1" max="72" step="0.5" value="5">
-            <input type="number" id="ta" min="0.5" max="200" step="0.5" value="5">
-          </div>
         </div>
+        <details class="more" id="moreTiming">
+          <summary><span class="more-label">Temperatures &amp; hours</span><span class="more-sum" id="sumTiming"></span></summary>
+          <div class="more-body">
+            <div class="row2">
+              <div class="field">
+                <div class="top"><label for="tfridge">Fridge</label><span class="hint deg">&deg;C</span></div>
+                <input type="number" id="tfridge" min="0" max="18" step="0.5" value="4">
+              </div>
+              <div class="field">
+                <div class="top"><label for="tflour">Flour</label><span class="hint deg">&deg;C</span></div>
+                <input type="number" id="tflour" min="0" max="35" step="0.5" value="24">
+              </div>
+            </div>
+            <div class="row2">
+              <div class="field">
+                <div class="top"><label for="tdb">Biga mixed at</label><span class="hint deg">&deg;C</span></div>
+                <input type="number" id="tdb" min="5" max="35" step="0.5" value="18">
+              </div>
+              <div class="field">
+                <div class="top"><label for="tdf">Dough mixed at</label><span class="hint deg">&deg;C</span></div>
+                <input type="number" id="tdf" min="10" max="35" step="0.5" value="24">
+              </div>
+            </div>
+            <div class="field">
+              <div class="top"><label for="r55">Rule of 55</label><span class="hint">sums to</span></div>
+              <input type="number" id="r55" min="45" max="65" step="0.5" value="55">
+            </div>
+            <div class="field">
+              <div class="top"><label for="tb">Biga ferment</label><span class="hint">hours</span></div>
+              <div class="pair">
+                <input type="range" id="tbR" min="2" max="72" step="0.5" value="18">
+                <input type="number" id="tb" min="1" max="200" step="0.5" value="18">
+              </div>
+            </div>
+            <div class="field">
+              <div class="top"><label for="tk">Bulk</label><span class="hint">hours</span></div>
+              <div class="pair">
+                <input type="range" id="tkR" min="0.5" max="36" step="0.5" value="2">
+                <input type="number" id="tk" min="0" max="200" step="0.5" value="2">
+              </div>
+            </div>
+            <div class="field">
+              <div class="top"><label for="ta">Appretto</label><span class="hint">hours</span></div>
+              <div class="pair">
+                <input type="range" id="taR" min="1" max="72" step="0.5" value="5">
+                <input type="number" id="ta" min="0.5" max="200" step="0.5" value="5">
+              </div>
+            </div>
+          </div>
+        </details>
       </fieldset>
 
       <div class="actions">
@@ -737,6 +788,49 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   }
   function toF(c){ return c * 9/5 + 32; }
   function toC(f){ return (f - 32) * 5/9; }
+
+  /* ---------- progressive disclosure ---------- */
+  /* Which drawers are open is a view preference, not part of the recipe, so it
+     lives in its own storage key and stays out of KEYS and out of the share
+     link -- a link should not force four drawers open on someone else's
+     screen, and KEYS drives the input wiring, the boot coercion and query(). */
+  var OPEN_KEY = "biga.open.v1";
+  var MORE = ["moreBatch","moreFormula","moreBiga","moreTiming"];
+  var MORE_KEYS = {
+    moreBatch:   ["k","pk","unit","pc","pw","ph"],
+    moreFormula: ["salt","malt"],
+    moreBiga:    ["bf","bh","sp"],
+    moreTiming:  ["tfridge","tflour","r55","tdb","tdf"]
+  };
+  function readOpen(){
+    try{ return JSON.parse(localStorage.getItem(OPEN_KEY)) || {}; }catch(e){ return {}; }
+  }
+  function persistOpen(){
+    var o = {};
+    MORE.forEach(function(id){ var d = $(id); if(d) o[id] = d.open; });
+    try{ localStorage.setItem(OPEN_KEY, JSON.stringify(o)); }catch(e){}
+  }
+  /* A shared link can carry values that live behind a drawer, so a section
+     whose hidden settings are off-default opens itself unless the viewer has
+     said otherwise. inPlay() keeps a tonda baker from being told about pans. */
+  function moreDirty(id){
+    var off = MORE_KEYS[id].filter(inPlay).some(function(k){ return S[k] !== DEF[k]; });
+    // tb/tk/ta differ from DEF whenever a temperature moves, so a stage counts
+    // as touched only once it has stopped following the model
+    if(id === "moreTiming") off = off || STAGES.some(function(k){ return !onModel(k); });
+    return off;
+  }
+  function syncMore(){
+    MORE.forEach(function(id){
+      var d = $(id); if(!d) return;
+      d.firstElementChild.toggleAttribute("data-dirty", moreDirty(id));
+    });
+    $("sumBatch").textContent   = isPan() ? "area \u00f7 " + num(S.pk) : S.k + " g per inch";
+    $("sumFormula").textContent = num(S.salt) + " % salt \u00b7 " + num(S.malt) + " % malt";
+    $("sumBiga").textContent    = S.bf + " / " + num(S.bh) + " / " + S.sp + " %";
+    $("sumTiming").textContent  = "fridge " + tmpU(S.tfridge) + " \u00b7 "
+                                + num(S.tb) + " / " + num(S.tk) + " / " + num(S.ta) + " h";
+  }
 
   /* ---------- formatting ---------- */
   function wtParts(v){
@@ -1183,6 +1277,8 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     var pan = isPan();
     $("roundFields").hidden = pan;
     $("panFields").hidden = !pan;
+    $("roundMore").hidden = pan;
+    $("panMore").hidden = !pan;
     $("wLabel").textContent = pan ? "Weight per teglia" : "Weight per panetto";
     $("pwHint").textContent = $("phHint").textContent = S.unit ? "inches" : "cm";
     $("pwLabel").textContent = isRoundPan() ? "Pan diameter" : "Pan width";
@@ -1190,6 +1286,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     $("finalSub").textContent = pan ? "what goes into each teglia" : "what ends up in the panetti";
     document.querySelectorAll("th.wcol").forEach(function(h){ h.textContent = isImp() ? "Weight" : "Grams"; });
     document.querySelectorAll("span.deg").forEach(function(h){ h.textContent = isImp() ? "\u00b0F" : "\u00b0C"; });
+    syncMore();
 
     pressed(".shapes .size", function(b){ return Number(b.dataset.shape) === S.shape; });
     pressed(".sizes .size", function(b){
@@ -1289,7 +1386,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   function onModel(k){ return Math.abs(S[k] - MODEL[k]) < 0.26; }
 
   function syncWater(){
-    $("twater").value = tmp(waterTemp());
+    $("twater").textContent = tmpU(waterTemp());
     $("twaterHint").textContent = "= " + waterSum();
   }
 
@@ -1310,7 +1407,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     var st = SCHED[k], envName = (k === "tb" ? S.envb : k === "tk" ? S.envk : S.enva) ? "fridge" : "room";
     var ends = endTemp(S[k], st.T0, st.env, st.tc);
     var where = tmp(st.T0) + " \u2192 " + tmpU(ends) + " in the " + envName;
-    return onModel(k) ? where : "custom \u00b7 model says " + num(MODEL[k]) + " h";
+    return num(S[k]) + " h \u00b7 " + (onModel(k) ? where : "model says " + num(MODEL[k]) + " h");
   }
 
   function update(){ applySchedule(); syncInputs(); render(); persist(); }
@@ -1813,6 +1910,12 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   if(!S.bake) S.bake = defaultBake();
   STAGES.forEach(function(k){ GIVEN[k] = (k in stored) || (k in hashed); });
   applySchedule(true);
+  var openState = readOpen();
+  MORE.forEach(function(id){
+    var d = $(id); if(!d) return;
+    d.open = (id in openState) ? !!openState[id] : moreDirty(id);
+    d.addEventListener("toggle", persistOpen);
+  });
   update();
 })();
 </script>

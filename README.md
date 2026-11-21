@@ -45,6 +45,11 @@ want — a round panetto, or a teglia sized by the Italian pan rule.
   120–145 g a cup depending on the scoop, and this is a page about getting the grams right. The named
   rules keep their metric constants, except the rule of 55, which has an exact Fahrenheit twin at 195
   because `(9/5)(55) + 3(32) = 195`.
+- **Advanced settings fold away.** Each section keeps what you change between two bakes of the same
+  recipe and folds the rest behind a disclosure whose closed state still prints what it is hiding —
+  `Biga formula / 80 / 45 / 20 %`. A section opens itself when a link carries a value it hides, and
+  marks itself when you have changed one. Open or closed is a view preference, kept on the device and
+  out of the share link.
 - **Share link** writes every setting into the address as query parameters, and every setting — shape,
   pan, unit, counts and formula — is remembered in `localStorage` for the next visit.
 - **Print recipe as PDF** composes a two-page sheet — formula, method, timetable — as a real vector
