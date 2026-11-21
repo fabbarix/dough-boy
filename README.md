@@ -39,6 +39,12 @@ want — a round panetto, or a teglia sized by the Italian pan rule.
   puts more friction into the dough.
 - **Timetable** counts back from the bake time through appretto, staglio, bulk, rinfresco and the biga,
   and adds a bench-tempering step when the balls come out of the fridge.
+- **Metric or imperial.** One switch moves the whole page to °F and oz/lb. State stays metric
+  throughout and imperial is a skin over the display and the input fields, so nothing drifts. Cups and
+  spoons appear beside the weights as a marked approximation, never instead of them — flour runs
+  120–145 g a cup depending on the scoop, and this is a page about getting the grams right. The named
+  rules keep their metric constants, except the rule of 55, which has an exact Fahrenheit twin at 195
+  because `(9/5)(55) + 3(32) = 195`.
 - **Share link** writes every setting into the address as query parameters, and every setting — shape,
   pan, unit, counts and formula — is remembered in `localStorage` for the next visit.
 - **Print recipe as PDF** composes a two-page sheet — formula, method, timetable — as a real vector
