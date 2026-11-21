@@ -150,7 +150,9 @@ input[type="range"]::-moz-range-thumb{
   border:2px solid var(--surface);cursor:pointer;
 }
 .sizes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
-.shapes,.units,.pantype{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+".shapes,.units,.pantype{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.envs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:7px 0 2px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .pans{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
 .pans.rounds{grid-template-columns:repeat(3,1fr)}
 .size{
@@ -435,25 +437,58 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
           <div class="top"><label for="bake">Into the oven</label></div>
           <input type="datetime-local" id="bake">
         </div>
+        <div class="duo">
+          <div class="field">
+            <div class="top"><label for="troom">Room</label><span class="hint">&deg;C</span></div>
+            <input type="number" id="troom" min="5" max="35" step="0.5" value="18">
+          </div>
+          <div class="field">
+            <div class="top"><label for="tfridge">Fridge</label><span class="hint">&deg;C</span></div>
+            <input type="number" id="tfridge" min="0" max="18" step="0.5" value="4">
+          </div>
+        </div>
+        <div class="duo">
+          <div class="field">
+            <div class="top"><label for="tdb">Biga mixed at</label><span class="hint">&deg;C</span></div>
+            <input type="number" id="tdb" min="5" max="35" step="0.5" value="18">
+          </div>
+          <div class="field">
+            <div class="top"><label for="tdf">Dough mixed at</label><span class="hint">&deg;C</span></div>
+            <input type="number" id="tdf" min="10" max="35" step="0.5" value="24">
+          </div>
+        </div>
+
         <div class="field">
-          <div class="top"><label for="tb">Biga ferment</label><span class="hint">hours</span></div>
+          <div class="top"><label for="tb">Biga ferment</label><span class="hint" id="tbHint">hours</span></div>
+          <div class="envs" role="group" aria-label="Where the biga ferments">
+            <button type="button" class="size" data-env="envb" data-v="0">Room</button>
+            <button type="button" class="size" data-env="envb" data-v="1">Fridge</button>
+          </div>
           <div class="pair">
-            <input type="range" id="tbR" min="8" max="30" step="1" value="18">
-            <input type="number" id="tb" min="1" max="48" step="1" value="18">
+            <input type="range" id="tbR" min="2" max="72" step="0.5" value="18">
+            <input type="number" id="tb" min="1" max="200" step="0.5" value="18">
           </div>
         </div>
         <div class="field">
-          <div class="top"><label for="tk">Bulk after rinfresco</label><span class="hint">hours</span></div>
+          <div class="top"><label for="tk">Bulk after rinfresco</label><span class="hint" id="tkHint">hours</span></div>
+          <div class="envs" role="group" aria-label="Where the bulk rises">
+            <button type="button" class="size" data-env="envk" data-v="0">Room</button>
+            <button type="button" class="size" data-env="envk" data-v="1">Fridge</button>
+          </div>
           <div class="pair">
-            <input type="range" id="tkR" min="0.5" max="6" step="0.5" value="2">
-            <input type="number" id="tk" min="0" max="12" step="0.5" value="2">
+            <input type="range" id="tkR" min="0.5" max="36" step="0.5" value="2">
+            <input type="number" id="tk" min="0" max="200" step="0.5" value="2">
           </div>
         </div>
         <div class="field">
-          <div class="top"><label for="ta">Appretto (balls)</label><span class="hint">hours</span></div>
+          <div class="top"><label for="ta">Appretto (balls)</label><span class="hint" id="taHint">hours</span></div>
+          <div class="envs" role="group" aria-label="Where the balls proof">
+            <button type="button" class="size" data-env="enva" data-v="0">Room</button>
+            <button type="button" class="size" data-env="enva" data-v="1">Fridge</button>
+          </div>
           <div class="pair">
-            <input type="range" id="taR" min="2" max="12" step="0.5" value="5">
-            <input type="number" id="ta" min="0.5" max="24" step="0.5" value="5">
+            <input type="range" id="taR" min="1" max="72" step="0.5" value="5">
+            <input type="number" id="ta" min="0.5" max="200" step="0.5" value="5">
           </div>
         </div>
       </fieldset>
@@ -539,6 +574,13 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         formula's total hydration both hold true once the starter is folded in. Salt and malt go into the
         rinfresco only — salt in the biga would slow the ferment. Baker's percentages are against
         <em>total</em> flour; the biga's own hydration is against biga flour.
+        <strong>Timings follow the temperature.</strong> Each stage names where it rises, and the hours are
+        solved from the dough's own temperature and its surroundings rather than fixed: fermentation rate
+        follows a square-root law in temperature, the dough is tracked as it drifts towards the room or the
+        fridge rather than assumed to arrive there, and the starter enters as a logarithm, so doubling it
+        subtracts hours instead of halving them. The defaults are the calibration — 20 panetti mixed at
+        18&nbsp;&deg;C in an 18&nbsp;&deg;C room still give 18&nbsp;h, 2&nbsp;h and 5&nbsp;h. Type an hour
+        figure yourself and that stage stays where you put it until the next temperature change.
         <strong>Share link</strong> writes every setting into the address as query parameters, so whoever
         opens it lands on this exact formula; the settings are remembered on this device too.
         <strong>Print recipe as PDF</strong> composes a two-page sheet — formula, method and timetable —
@@ -564,7 +606,8 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 <script>
 (function(){
   "use strict";
-  var DEF = {n:20,shape:0,d:12,k:22,pn:2,pw:30,ph:40,pk:2,unit:0,pc:0,w:264,
+  var DEF = {troom:18,tfridge:4,envb:0,envk:0,enva:0,tdb:18,tdf:24,
+             n:20,shape:0,d:12,k:22,pn:2,pw:30,ph:40,pk:2,unit:0,pc:0,w:264,
              h:65,salt:2.8,malt:0.5,bf:80,bh:45,sp:20,tb:18,tk:2,ta:5,bake:""};
   var KEYS = Object.keys(DEF);
   var S = {};
@@ -716,6 +759,127 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     return count() + " × " + g(S.w) + " g" + (isPan() ? ", one per teglia" : " panetti");
   }
 
+  /* ---------- fermentation ---------- */
+  /* Rate follows Ratkowsky's square-root law rather than a flat Q10. Both agree
+     near the bench (20->30 C comes out at 2.1x, the usual "doubles per 10 C"),
+     but Q10=2 claims a 4 C fridge is only 3x slower, which would retard a 2 h
+     bulk to 6 h. The square root steepens in the cold and reaches zero near
+     freezing, so a fridge lands where fridges actually land. */
+  var TMIN = -5;     // no activity at or below this, C — the cold-end knob:
+                     // -5 puts a 4 C fridge 7.7x slower and a cold ball proof
+                     // at ~34 h, inside the 24-48 h bakers actually use, while
+                     // 20->30 C still comes out at 1.96, the classic Q10
+  var TREF = 20;     // rates and targets are quoted against this, C
+  var TMU  = 8;      // growth time constant, reference-hours
+
+  function rate(T){
+    var a = (T - TMIN) / (TREF - TMIN);
+    return a > 0 ? a*a : 0;
+  }
+
+  /* Hours are no use as a target when the temperature moves, so each stage
+     carries a target in REFERENCE-HOURS: hours at TREF that ferment as much.
+     A stage spanning bench and fridge is then just one integral. */
+  /* The calibration is the page's own defaults, taken as a whole scenario
+     rather than as three loose temperatures: 20 x 264 g at 18 C in an 18 C
+     room, the dough mixed at 24 C. Run it through the model and it must give
+     back 18 / 2 / 5 h, which is what these targets are built to do. Quoting a
+     single temperature per stage cannot do that, because a stage's dough drifts
+     across the stage and the biga sits cooler than the final dough. */
+  var ANCHOR_ENV = 18;
+  var ANCHOR = {
+    tb: {hours:18, T0:18, mass:3639, inoc:DEF.sp / DEF.bf * 100},  // starter vs biga flour
+    tk: {hours:2,  T0:24, mass:5280, inoc:DEF.bf},   // bulk: biga's share of flour
+    ta: {hours:5,            mass:264, inoc:DEF.bf}  // balls: start where bulk ended
+  };
+  function anchorTarget(key){
+    var tcK = tau(ANCHOR.tk.mass);
+    if(key === "ta"){
+      var after = endTemp(ANCHOR.tk.hours, ANCHOR.tk.T0, ANCHOR_ENV, tcK);
+      return accum(ANCHOR.ta.hours, after, ANCHOR_ENV, tau(ANCHOR.ta.mass));
+    }
+    var a = ANCHOR[key];
+    return accum(a.hours, a.T0, ANCHOR_ENV, tau(a.mass));
+  }
+
+  /* Gas output tracks population and population grows exponentially, so the
+     time to a fixed target goes as ln(1 + K/I): doubling the starter subtracts
+     a near-constant number of hours rather than halving them. The 1 + keeps a
+     100% biga from predicting a four-minute bulk. */
+  function stageK(key){
+    return ANCHOR[key].inoc * (Math.exp(anchorTarget(key) / TMU) - 1);
+  }
+  function stageTarget(key, inoc){
+    return TMU * Math.log(1 + stageK(key) / Math.max(inoc, 0.1));
+  }
+
+  /* Dough does not arrive at fridge temperature, it decays towards it, and that
+     lag is most of why flat cold math misses. With a quadratic rate the
+     accumulation integrates in closed form. */
+  function tau(massG){ return 1.1 * Math.pow(Math.max(massG,1)/264, 1/3); }
+  function floorT(T){ return Math.max(T, TMIN + 0.5); }
+
+  function accum(t, T0, Tenv, tc){
+    var a = floorT(Tenv) - TMIN, u = floorT(T0) - floorT(Tenv);
+    var e1 = Math.exp(-t/tc);
+    return (a*a*t + 2*a*u*tc*(1-e1) + (u*u*tc/2)*(1-e1*e1)) / ((TREF-TMIN)*(TREF-TMIN));
+  }
+  function endTemp(t, T0, Tenv, tc){ return Tenv + (T0 - Tenv) * Math.exp(-t/tc); }
+
+  function solveHours(target, T0, Tenv, tc){
+    var hi = 1;
+    while(accum(hi, T0, Tenv, tc) < target && hi < 400) hi *= 2;
+    if(hi >= 400) return 400;
+    var lo = hi/2;
+    for(var i = 0; i < 50; i++){
+      var m = (lo + hi) / 2;
+      if(accum(m, T0, Tenv, tc) < target) lo = m; else hi = m;
+    }
+    return (lo + hi) / 2;
+  }
+
+  function envTemp(e){ return e ? S.tfridge : S.troom; }
+  function envWord(e){ return e ? "fridge" : "room"; }
+  function envPhrase(e){ return num(envTemp(e)) + " \u00b0C" + (e ? " in the fridge" : ""); }
+  function bulkText(){
+    return "Covered at " + envPhrase(S.envk) + ", with a fold at the halfway point if the dough feels slack.";
+  }
+  /* a cold appretto has to come back to the bench before it can be opened;
+     two time constants gets a panetto most of the way there */
+  function temperHours(){ return round5(2 * tau(S.w)); }
+  function temperText(){
+    return S.enva ? ", then about " + num(temperHours()) + " h on the bench to come back up" : "";
+  }
+  function envLine(){
+    return [["biga", S.envb], ["bulk", S.envk], ["balls", S.enva]].map(function(x){
+      return x[0] + " " + num(envTemp(x[1])) + " \u00b0C";
+    }).join(" \u00b7 ");
+  }
+  function round5(h){ return Math.round(h * 2) / 2; }
+
+  /* Every stage in order: inoculation, target, the temperature it starts at,
+     and the hours that take it there. The appretto starts wherever the bulk
+     left the dough, so the chain carries its own temperature forward. */
+  function schedule(d){
+    var iBiga = d.starterPctBiga * 100;
+    var out = {};
+
+    var eB = envTemp(S.envb), tcB = tau(d.bigaMass);
+    out.tb = {inoc:iBiga, target:stageTarget("tb", iBiga), T0:S.tdb, env:eB, tc:tcB};
+    out.tb.hours = solveHours(out.tb.target, S.tdb, eB, tcB);
+
+    var eK = envTemp(S.envk), tcK = tau(d.W);
+    out.tk = {inoc:S.bf, target:stageTarget("tk", S.bf), T0:S.tdf, env:eK, tc:tcK};
+    out.tk.hours = solveHours(out.tk.target, S.tdf, eK, tcK);
+    var afterBulk = endTemp(out.tk.hours, S.tdf, eK, tcK);
+
+    var eA = envTemp(S.enva), tcA = tau(S.w);
+    out.ta = {inoc:S.bf, target:stageTarget("ta", S.bf), T0:afterBulk, env:eA, tc:tcA};
+    out.ta.hours = solveHours(out.ta.target, afterBulk, eA, tcA);
+    out.ta.endTemp = endTemp(out.ta.hours, afterBulk, eA, tcA);
+    return out;
+  }
+
   /* ---------- the math ---------- */
   function compute(){
     var W  = count() * S.w;                 // total dough
@@ -793,6 +957,17 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     if(d.bAddW < 0) a.push(["No water left for the biga","the starter brings "+gu(d.sw)+" but the biga only takes "+gu(d.bWater)+" at "+S.bh+"% hydration."]);
     if(d.rWater < 0) a.push(["Biga is wetter than the final dough","at "+S.bh+"% over "+S.bf+"% of the flour, the biga already holds more water than "+S.h+"% total hydration allows. Lower the biga hydration or its flour share."]);
     if(d.noRinfFlour) a.push(["Biga with 100% of flour","rinfresco requires no flour"]);
+    if(SCHED){
+      STAGES.forEach(function(k){
+        var st = SCHED[k], lbl = {tb:"biga",tk:"bulk",ta:"appretto"}[k];
+        if(st.hours >= 399) a.push(["The " + lbl + " never gets there",
+          "at " + num(st.env) + " \u00b0C this dough ferments too slowly to finish. Warm the stage or raise the inoculation."]);
+        else if(st.hours > 72) a.push(["A very long " + lbl,
+          num(round5(st.hours)) + " h at " + num(st.env) + " \u00b0C. Workable, but the dough will be markedly more acidic by the end."]);
+      });
+      if(Math.max(S.envb ? 0 : S.troom, S.tdf) > 28) a.push(["Warm enough to shift the flavour",
+        "above about 28 \u00b0C the bacteria outrun the yeast. The timings still hold, but expect a sourer, slacker dough than the same formula run cool."]);
+    }
     $("alerts").innerHTML = a.map(function(x){
       return "<div class=\"alert\"><b>"+x[0]+"</b><span>"+x[1]+"</span></div>";
     }).join("");
@@ -801,12 +976,12 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   function renderMethod(d){
     var steps = [
       ["Mix the biga", "Break <b>"+gu(d.starter)+"</b> of starter into <b>"+gu(Math.max(d.bAddW,0))+"</b> of cool water, then rub in <b>"+gu(Math.max(d.bAddF,0))+"</b> of flour until every crumb is damp. Shaggy, not smooth — a stiff biga at "+S.bh+"% is meant to look under-mixed."],
-      ["Ferment "+S.tb+" h", "Cover loosely and hold at 16–18 °C. It is ready when it smells of yogurt and hazelnut and has roughly doubled; a warmer room shortens this considerably."],
+      ["Ferment "+num(S.tb)+" h", "Hold at "+num(envTemp(S.envb))+" °C"+(S.envb?" in the fridge":"")+". It is ready when it smells of yogurt and hazelnut and has roughly doubled; the hours above already follow the temperature, so trust the dough over the clock."],
       ["Rinfresco", "Break the <b>"+gu(d.bigaMass)+"</b> of biga into <b>"+gu(Math.max(d.rWater,0))+"</b> of water, hold back a little to dissolve the salt. "+rinfAdd(BOLD,d)+", mix to a rough mass, rest 20 min."],
-      ["Salt and develop", "Add <b>"+gu(d.salt)+"</b> of salt with the reserved water and mix until the dough clears the bowl and passes a windowpane. Keep the finish under 25 °C."],
-      ["Bulk "+S.tk+" h", "Covered, at room temperature, with a fold at the halfway point if the dough feels slack."],
+      ["Salt and develop", "Add <b>"+gu(d.salt)+"</b> of salt with the reserved water and mix until the dough clears the bowl and passes a windowpane. Bring it off the mixer at <b>"+num(S.tdf)+" °C</b>."],
+      ["Bulk "+num(S.tk)+" h", bulkText()],
       ["Staglio", staglioText(BOLD)],
-      ["Appretto "+S.ta+" h", apprettoText()]
+      ["Appretto "+num(S.ta)+" h", "Hold at " + envPhrase(S.enva) + temperText() + ". " + apprettoText()]
     ];
     $("method").innerHTML = steps.map(function(s){
       return "<li><h3>"+s[0]+"</h3><p>"+s[1]+"</p></li>";
@@ -830,9 +1005,11 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       [refresh, "Refresh the starter", "so it peaks just as the biga is mixed", false],
       [bigaMix, "Impasto biga", "flour, water and starter only", false],
       [bulk, "Rinfresco", rinfNote(d), false],
-      [appretto, "Staglio", staglioNote(), false],
-      [t, "Into the oven", "", true]
+      [appretto, "Staglio", staglioNote(), false]
     ];
+    if(S.enva) rows.push([new Date(t - temperHours()*HR), "Out of the fridge",
+                          "let the " + (isPan() ? "panetti" : "balls") + " come back to the bench", false]);
+    rows.push([t, "Into the oven", "", true]);
     var dfT = new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit"});
     var dfD = new Intl.DateTimeFormat(undefined,{weekday:"short"});
     el.innerHTML = rows.map(function(r){
@@ -841,7 +1018,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         (r[2]?"<span>"+r[2]+"</span>":"")+"</td></tr>";
     }).join("");
     var total = (S.tb+S.tk+S.ta);
-    $("schedMeta").textContent = total.toFixed(1).replace(/\.0$/,"")+" h from biga to oven";
+    $("schedMeta").textContent = total.toFixed(1).replace(/\.0$/,"")+" h from biga to oven \u00b7 "+envLine();
   }
 
   function recipeText(d){
@@ -933,6 +1110,10 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     });
     PAIRS.forEach(function(p){ var r = $(p[1]); if(r) r.value = S[p[0]]; });
     $("hOut").textContent = Number(S.h).toFixed(1)+" %";
+    STAGES.forEach(function(k){ $(k+"Hint").textContent = stageHint(k); });
+    ["envb","envk","enva"].forEach(function(e){
+      pressed('.envs .size[data-env="'+e+'"]', function(b){ return Number(b.dataset.v) === S[e]; });
+    });
     syncShape();
   }
 
@@ -949,7 +1130,48 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     return v;
   }
 
-  function update(){ syncInputs(); render(); persist(); }
+  /* The hours follow the model the way the panetto weight follows the rule of
+     22: recomputed whenever anything they depend on moves, but a number you
+     type yourself is left alone until the next temperature change. */
+  var MODEL = {tb:DEF.tb, tk:DEF.tk, ta:DEF.ta}, SCHED = null;
+  var STAGES = ["tb","tk","ta"];
+
+  /* `seed` is for the first run, where there is no previous model to compare
+     against: hours arriving from a link or storage count as following when they
+     match what the model makes of the settings that came with them. After that,
+     a stage follows if it matched the PREVIOUS model, so it keeps following as
+     the temperatures move. */
+  function applySchedule(seed){
+    var s = schedule(compute());
+    SCHED = s;
+    STAGES.forEach(function(k){
+      var was = MODEL[k];
+      MODEL[k] = round5(s[k].hours);
+      if(Math.abs(S[k] - (seed ? MODEL[k] : was)) < 0.26) S[k] = MODEL[k];
+    });
+  }
+  function onModel(k){ return Math.abs(S[k] - MODEL[k]) < 0.26; }
+
+  /* refresh the stage fields without fighting the one being typed in */
+  function syncStages(skip){
+    STAGES.forEach(function(k){
+      if(k !== skip){
+        if($(k).value !== String(S[k])) $(k).value = S[k];
+        $(k+"R").value = S[k];
+      }
+      $(k+"Hint").textContent = stageHint(k);
+    });
+  }
+
+  function stageHint(k){
+    if(!SCHED) return "hours";
+    var st = SCHED[k], envName = (k === "tb" ? S.envb : k === "tk" ? S.envk : S.enva) ? "fridge" : "room";
+    var ends = endTemp(S[k], st.T0, st.env, st.tc);
+    var where = num(round5(st.T0)) + " \u2192 " + num(round5(ends)) + " \u00b0C in the " + envName;
+    return onModel(k) ? where : "custom \u00b7 model says " + num(MODEL[k]) + " h";
+  }
+
+  function update(){ applySchedule(); syncInputs(); render(); persist(); }
 
   KEYS.forEach(function(k){
     var el = $(k); if(!el) return;
@@ -969,6 +1191,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       // one number cannot back-solve two pan sides, so a typed teglia weight
       // just becomes a custom weight and the sides stay put
       if(k==="w" && !isPan() && S.k > 0){ S.d = Math.round((S.w / S.k) * 2) / 2; $("d").value = S.d; $("dR").value = S.d; }
+      applySchedule(); syncStages(k);
       syncShape();
       render(); persist();
     });
@@ -987,6 +1210,14 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   document.querySelectorAll(".sizes .size").forEach(function(b){
     b.addEventListener("click", function(){
       S.d = Number(b.dataset.d); S.w = ruleWeight(); update();
+    });
+  });
+
+  document.querySelectorAll(".envs .size").forEach(function(b){
+    b.addEventListener("click", function(){
+      S[b.dataset.env] = Number(b.dataset.v);
+      MODEL[{envb:"tb",envk:"tk",enva:"ta"}[b.dataset.env]] = S[{envb:"tb",envk:"tk",enva:"ta"}[b.dataset.env]];
+      update();
     });
   });
 
@@ -1040,6 +1271,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 
   $("reset").addEventListener("click", function(){
     S = Object.assign({}, DEF); S.bake = defaultBake();
+    MODEL = {tb:DEF.tb, tk:DEF.tk, ta:DEF.ta};
     $("copyOut").hidden = true; update();
   });
 
@@ -1263,14 +1495,15 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         + " of cool water, then rub in " + gu(Math.max(d.bAddF,0))
         + " of flour until every crumb is damp. Shaggy, not smooth — a stiff biga at "
         + S.bh + "% is meant to look under-mixed."],
-      ["Ferment " + S.tb + " h", "Cover loosely and hold at 16–18 °C. It is ready when it smells of yogurt and hazelnut and has roughly doubled; a warmer room shortens this considerably."],
+      ["Ferment " + num(S.tb) + " h", "Hold at " + num(envTemp(S.envb)) + " \u00b0C" + (S.envb ? " in the fridge" : "")
+        + ". It is ready when it smells of yogurt and hazelnut and has roughly doubled; the hours above already follow the temperature, so trust the dough over the clock."],
       ["Rinfresco", "Break the " + gu(d.bigaMass) + " of biga into " + gu(Math.max(d.rWater,0))
         + " of water, holding back a little to dissolve the salt. " + rinfAdd(PLAIN,d)
         + ", mix to a rough mass, rest 20 minutes."],
-      ["Salt and develop", "Add " + gu(d.salt) + " of salt with the reserved water and mix until the dough clears the bowl and passes a windowpane. Keep the finish under 25 °C."],
-      ["Bulk " + S.tk + " h", "Covered, at room temperature, with a fold at the halfway point if the dough feels slack."],
+      ["Salt and develop", "Add " + gu(d.salt) + " of salt with the reserved water and mix until the dough clears the bowl and passes a windowpane. Bring it off the mixer at " + num(S.tdf) + " \u00b0C."],
+      ["Bulk " + num(S.tk) + " h", bulkText()],
       ["Staglio", staglioText(PLAIN)],
-      ["Appretto " + S.ta + " h", apprettoText()]
+      ["Appretto " + num(S.ta) + " h", "Hold at " + envPhrase(S.enva) + temperText() + ". " + apprettoText()]
     ];
     steps.forEach(function(s,i){
       fnt("Plex","normal",8.6);
@@ -1292,7 +1525,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     /* ---- timetable ---- */
     var t = new Date(S.bake);
     if(!isNaN(t.getTime())){
-      heading("Timetable", "counted back from the bake");
+      heading("Timetable", "counted back from the bake \u00b7 " + envLine());
       var HR = 3600000;
       var appretto = new Date(t - S.ta*HR), bulk = new Date(appretto - S.tk*HR);
       var bigaMix = new Date(bulk - S.tb*HR), refresh = new Date(bigaMix - 6*HR);
@@ -1302,9 +1535,11 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         [refresh, "Refresh the starter", "so it peaks as the biga is mixed", 0],
         [bigaMix, "Impasto biga", "flour, water and starter only", 0],
         [bulk, "Rinfresco", rinfNote(d), 0],
-        [appretto, "Staglio", staglioNote(), 0],
-        [t, "Into the oven", "", 1]
+        [appretto, "Staglio", staglioNote(), 0]
       ];
+      if(S.enva) rows.push([new Date(t - temperHours()*HR), "Out of the fridge",
+                            "let the " + (isPan() ? "panetti" : "balls") + " come back to the bench", 0]);
+      rows.push([t, "Into the oven", "", 1]);
       rows.forEach(function(r){
         var h = 7.4;
         need(h + 2);
@@ -1408,6 +1643,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   S.shape = S.shape === 1 ? 1 : 0;
   S.unit  = S.unit  === 1 ? 1 : 0;
   S.pc    = S.pc    === 1 ? 1 : 0;
+  ["envb","envk","enva"].forEach(function(e){ S[e] = S[e] === 1 ? 1 : 0; });
   // settings saved before the rule of 22 carry a weight but no diameter
   if(!isPan() && !("d" in stored) && !("d" in hashed) && S.k > 0) S.d = Math.round((S.w / S.k) * 2) / 2;
   // settings saved before the starter became a percentage carry its weight in grams as `st`:
@@ -1421,6 +1657,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     if(F0 > 0) S.sp = Math.min(hi, Math.max(lo, Math.round(legacySt / F0 * 100)));
   }
   if(!S.bake) S.bake = defaultBake();
+  applySchedule(true);
   update();
 })();
 </script>

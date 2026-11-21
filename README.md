@@ -31,11 +31,60 @@ want — a round panetto, or a teglia sized by the Italian pan rule.
 - Warnings appear when the starter dose or a biga hydration makes a component go negative.
 - **Method and timetable follow the shape** — a tonda is opened by hand, a teglia is tipped into an oiled
   pan and pressed to the corners (or the rim of a round pan).
-- **Timetable** counts back from the bake time through appretto, staglio, bulk, rinfresco and the biga.
+- **Fermentation times are solved, not typed.** Each stage — biga, bulk, appretto — names whether it
+  rises in the room or the fridge, and its hours come from the dough's temperature and its surroundings.
+  Type an hour figure yourself and that stage stays put until the next temperature change.
+- **Timetable** counts back from the bake time through appretto, staglio, bulk, rinfresco and the biga,
+  and adds a bench-tempering step when the balls come out of the fridge.
 - **Share link** writes every setting into the address as query parameters, and every setting — shape,
   pan, unit, counts and formula — is remembered in `localStorage` for the next visit.
 - **Print recipe as PDF** composes a two-page sheet — formula, method, timetable — as a real vector
   PDF with IBM Plex subset and embedded, generated entirely in the browser.
+
+## Fermentation timing
+
+Rate follows Ratkowsky's square-root law rather than a flat Q10, normalised to 1 at `Tref = 20 °C`:
+
+```
+r(T) = ((T − Tmin) / (Tref − Tmin))²            Tmin = −5 °C
+```
+
+Both agree where the usual rule works — 20→30 °C comes out at 1.96, near the classic Q10 of 2 — but
+Q10 = 2 makes a 4 °C fridge only 3× slower, which would retard a 2 h bulk to 6 h. The square root
+steepens in the cold and reaches zero near freezing, putting a cold ball proof around 30 h.
+
+Dough does not arrive at fridge temperature, it decays towards it, and that lag is most of why flat cold
+math misses. With a quadratic rate the accumulated fermentation integrates in closed form, so a stage
+spanning bench and fridge is one expression rather than a simulation:
+
+```
+T(s) = Tenv + (T₀ − Tenv)·e^(−s/τ)
+a = Tenv − Tmin,  u = T₀ − Tenv,  D = (Tref − Tmin)²
+
+F(t) = [ a²t + 2auτ(1 − e^(−t/τ)) + (u²τ/2)(1 − e^(−2t/τ)) ] / D
+```
+
+`F` is in *reference-hours* — hours at `Tref` that ferment as much — and `τ` scales as the cube root of
+the mass, about 1.1 h for a 264 g ball and 3 h for a 5 kg bulk. `F` is monotonic, so the hours come from
+bisecting `F(t) = target`.
+
+Each stage's target allows for how much is already alive in it. Gas output tracks population and
+population grows exponentially, so time to a fixed target goes as a logarithm — doubling the starter
+subtracts hours rather than halving them:
+
+```
+target = τμ · ln(1 + K / I)                       τμ = 8 reference-hours
+```
+
+`I` is the starter against biga flour for the biga, and the biga's share of the flour for the bulk and
+appretto, since an 80 %-prefermented dough moves far faster than a 40 % one. `K` is fixed per stage by
+running the page's own defaults through the model, so 20 panetti mixed at 18 °C in an 18 °C room still
+give 18 h, 2 h and 5 h.
+
+`Tmin` and `τμ` are the two knobs worth tuning against your own bakes. The model tracks yeast activity,
+not flavour: hitting the same target warm will taste more acidic, which the page warns about above 28 °C
+rather than pretending the curve captures it. The bench-tempering time after a cold appretto is thermal,
+not fermentative, so the fermentation it contributes is not counted.
 
 ## The arithmetic
 
