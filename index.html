@@ -36,6 +36,7 @@
   --focus:#2645C4;
   --shadow:0 1px 2px rgba(18,22,31,.05), 0 8px 24px -16px rgba(18,22,31,.28);
   --r:10px;
+  --sp-1:6px; --sp-2:12px; --sp-3:18px;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
   --cond:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
@@ -120,8 +121,8 @@ legend{
   font-family:var(--cond);font-weight:700;font-size:11.5px;letter-spacing:.15em;
   text-transform:uppercase;color:var(--muted-solid);padding:0;
 }
-.field{display:grid;gap:5px;margin-top:12px}
-.field:first-of-type{margin-top:10px}
+.field{display:grid;gap:var(--sp-1);margin-top:var(--sp-2)}
+fieldset>legend+*{margin-top:10px}
 .field .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 label{font-size:13px;color:var(--ink)}
 .hint{font-size:11.5px;color:var(--muted-solid);font-family:var(--cond);letter-spacing:.02em}
@@ -145,14 +146,16 @@ input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
   background:var(--biga);border:2px solid var(--surface);margin-top:-6px;cursor:pointer;
 }
+input[readonly]{background:transparent;border-style:dashed;color:var(--muted-solid);cursor:default}
 input[type="range"]::-moz-range-thumb{
   width:16px;height:16px;border-radius:50%;background:var(--biga);
   border:2px solid var(--surface);cursor:pointer;
 }
 .sizes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
-".shapes,.units,.pantype{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
-.envs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:7px 0 2px}
-.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.shapes,.units,.pantype{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.envs{display:grid;grid-template-columns:92px 92px;justify-content:start;gap:6px;margin:7px 0 2px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.row2 .field{margin-top:0}
 .pans{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
 .pans.rounds{grid-template-columns:repeat(3,1fr)}
 .size{
@@ -161,11 +164,30 @@ input[type="range"]::-moz-range-thumb{
   background:var(--surface-2);color:var(--muted-solid);
   border:1px solid var(--line-strong);
 }
+details.more{margin-top:var(--sp-3);border-top:1px solid var(--line)}
+details.more>summary{
+  list-style:none;cursor:pointer;
+  display:grid;grid-template-columns:1fr auto;gap:1px 10px;align-items:baseline;padding:10px 0;
+  font-family:var(--cond);font-weight:600;font-size:12.5px;letter-spacing:.01em;color:var(--muted-solid);
+}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::after{content:"+";grid-column:2;grid-row:1;font-family:var(--mono);font-size:14px;line-height:1}
+details.more[open]>summary::after{content:"\2212"}
+details.more>summary:hover{color:var(--ink)}
+details.more>summary:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:4px}
+.more-label{grid-column:1;grid-row:1}
+.more-sum{grid-column:1;grid-row:2;font-family:var(--mono);font-weight:400;font-size:11.5px;color:var(--muted-solid);font-variant-numeric:tabular-nums}
+details.more[open] .more-sum{display:none}
+.more-body>:first-child{margin-top:4px}
+fieldset.all-more>details.more{margin-top:4px;border-top:0}
+summary[data-dirty] .more-label::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--rinf);margin-right:7px;vertical-align:1px}
+.derived{display:grid;grid-template-columns:1fr auto;gap:2px 10px;margin-top:var(--sp-2);padding:8px 10px;border:1px dashed var(--line-strong);border-radius:7px}
+.derived b{font-family:var(--mono);font-weight:500;font-variant-numeric:tabular-nums}
+.derived .hint{grid-column:1/-1}
+.cup{display:block;font-family:var(--cond);font-size:10.5px;font-weight:400;color:var(--muted-solid);letter-spacing:.01em}
 .size .g{display:block;font-family:var(--mono);font-size:10.5px;font-weight:400;opacity:.8}
-.size[aria-pressed="true"]{background:var(--biga);border-color:var(--biga);color:#fff}
-:root[data-theme="dark"] .size[aria-pressed="true"],
-.size[aria-pressed="true"]{color:var(--surface)}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px 18px 4px}
+.size[aria-pressed="true"]{background:var(--biga);border-color:var(--biga);color:var(--surface)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px 18px 4px;border-top:1px solid var(--line)}
 .actions .wide{grid-column:1 / -1}
 .btn{
   font-family:var(--cond);font-weight:600;font-size:13px;letter-spacing:.03em;
@@ -173,7 +195,7 @@ input[type="range"]::-moz-range-thumb{
   background:var(--surface-2);color:var(--ink);
 }
 .btn.primary{background:var(--ink);border-color:var(--ink);color:var(--bg)}
-.btn.quiet{background:transparent;border-color:transparent;color:var(--muted-solid);font-size:12px;padding:4px}
+.btn.quiet{background:transparent;border-color:transparent;color:var(--muted-solid);font-size:12px;padding:9px 10px}
 .btn:hover{border-color:var(--focus)}
 #copyOut{
   display:block;width:calc(100% - 36px);margin:10px 18px 4px;height:120px;
@@ -301,6 +323,10 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     <form class="panel controls" id="controls" autocomplete="off">
       <fieldset>
         <legend>Batch</legend>
+        <div class="units" role="group" aria-label="Measurement system">
+          <button type="button" class="size" data-imp="0">Metric<span class="g">g &middot; &deg;C</span></button>
+          <button type="button" class="size" data-imp="1">Imperial<span class="g">oz &middot; &deg;F</span></button>
+        </div>
         <div class="shapes" role="group" aria-label="Pizza style">
           <button type="button" class="size" data-shape="0">Tonda<span class="g">round &middot; rule of 22</span></button>
           <button type="button" class="size" data-shape="1">Teglia<span class="g">pan &middot; w &times; h &divide; 2</span></button>
@@ -323,10 +349,6 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
             <input type="number" id="d" min="6" max="24" step="0.5" value="12">
           </div>
         </div>
-        <div class="field">
-          <div class="top"><label for="k">Rule of 22</label><span class="hint">grams per inch</span></div>
-          <input type="number" id="k" min="12" max="36" step="0.5" value="22">
-        </div>
         </div>
 
         <div id="panFields" hidden>
@@ -347,6 +369,22 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
           <button type="button" class="size" data-pc="1" data-w="14" data-unit="1">14&Prime; round<span class="g"></span></button>
           <button type="button" class="size" data-pc="1" data-w="16" data-unit="1">16&Prime; round<span class="g"></span></button>
         </div>
+        </div>
+
+        <div class="field">
+          <div class="top"><label for="w" id="wLabel">Weight per panetto</label><span class="hint" id="wHint">grams</span></div>
+          <input type="number" id="w" min="80" max="3000" step="1" value="264">
+        </div>
+        <details class="more" id="moreBatch">
+          <summary><span class="more-label">Sizing rule</span><span class="more-sum" id="sumBatch"></span></summary>
+          <div class="more-body">
+            <div id="roundMore">
+        <div class="field">
+          <div class="top"><label for="k">Rule of 22</label><span class="hint">grams per inch</span></div>
+          <input type="number" id="k" min="12" max="36" step="0.5" value="22">
+        </div>
+            </div>
+            <div id="panMore" hidden>
         <div class="pantype" role="group" aria-label="Pan shape">
           <button type="button" class="size" data-pc="0">Rectangular</button>
           <button type="button" class="size" data-pc="1">Round</button>
@@ -373,12 +411,9 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
           <div class="top"><label for="pk">Rule of 2</label><span class="hint">divisor &middot; area in cm&sup2; &divide; this</span></div>
           <input type="number" id="pk" min="1" max="4" step="0.05" value="2">
         </div>
-        </div>
-
-        <div class="field">
-          <div class="top"><label for="w" id="wLabel">Weight per panetto</label><span class="hint" id="wHint">grams</span></div>
-          <input type="number" id="w" min="80" max="3000" step="1" value="264">
-        </div>
+            </div>
+          </div>
+        </details>
       </fieldset>
 
       <fieldset>
@@ -390,6 +425,9 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
             <input type="number" id="h" min="45" max="95" step="0.5" value="65">
           </div>
         </div>
+        <details class="more" id="moreFormula">
+          <summary><span class="more-label">Salt &amp; malt</span><span class="more-sum" id="sumFormula"></span></summary>
+          <div class="more-body">
         <div class="field">
           <div class="top"><label for="salt">Salt</label><span class="hint">% of total flour</span></div>
           <div class="pair">
@@ -404,10 +442,15 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
             <input type="number" id="malt" min="0" max="2" step="0.05" value="0.5">
           </div>
         </div>
+          </div>
+        </details>
       </fieldset>
 
-      <fieldset>
+      <fieldset class="all-more">
         <legend>Biga</legend>
+        <details class="more" id="moreBiga">
+          <summary><span class="more-label">Biga formula</span><span class="more-sum" id="sumBiga"></span></summary>
+          <div class="more-body">
         <div class="field">
           <div class="top"><label for="bf">Flour in the biga</label><span class="hint">% of total flour</span></div>
           <div class="pair">
@@ -429,6 +472,8 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
             <input type="number" id="sp" min="5" max="50" step="1" value="20">
           </div>
         </div>
+          </div>
+        </details>
       </fieldset>
 
       <fieldset>
@@ -437,36 +482,19 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
           <div class="top"><label for="bake">Into the oven</label></div>
           <input type="datetime-local" id="bake">
         </div>
-        <div class="duo">
-          <div class="field">
-            <div class="top"><label for="troom">Room</label><span class="hint">&deg;C</span></div>
-            <input type="number" id="troom" min="5" max="35" step="0.5" value="18">
-          </div>
-          <div class="field">
-            <div class="top"><label for="tfridge">Fridge</label><span class="hint">&deg;C</span></div>
-            <input type="number" id="tfridge" min="0" max="18" step="0.5" value="4">
-          </div>
+        <div class="field">
+          <div class="top"><label for="troom">Room</label><span class="hint deg">&deg;C</span></div>
+          <input type="number" id="troom" min="5" max="35" step="0.5" value="24">
         </div>
-        <div class="duo">
-          <div class="field">
-            <div class="top"><label for="tdb">Biga mixed at</label><span class="hint">&deg;C</span></div>
-            <input type="number" id="tdb" min="5" max="35" step="0.5" value="18">
-          </div>
-          <div class="field">
-            <div class="top"><label for="tdf">Dough mixed at</label><span class="hint">&deg;C</span></div>
-            <input type="number" id="tdf" min="10" max="35" step="0.5" value="24">
-          </div>
-        </div>
-
+        <p class="derived">
+          <span>Water for the impasto</span><b id="twater">19</b>
+          <span class="hint" id="twaterHint">&deg;C</span>
+        </p>
         <div class="field">
           <div class="top"><label for="tb">Biga ferment</label><span class="hint" id="tbHint">hours</span></div>
           <div class="envs" role="group" aria-label="Where the biga ferments">
             <button type="button" class="size" data-env="envb" data-v="0">Room</button>
             <button type="button" class="size" data-env="envb" data-v="1">Fridge</button>
-          </div>
-          <div class="pair">
-            <input type="range" id="tbR" min="2" max="72" step="0.5" value="18">
-            <input type="number" id="tb" min="1" max="200" step="0.5" value="18">
           </div>
         </div>
         <div class="field">
@@ -475,10 +503,6 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
             <button type="button" class="size" data-env="envk" data-v="0">Room</button>
             <button type="button" class="size" data-env="envk" data-v="1">Fridge</button>
           </div>
-          <div class="pair">
-            <input type="range" id="tkR" min="0.5" max="36" step="0.5" value="2">
-            <input type="number" id="tk" min="0" max="200" step="0.5" value="2">
-          </div>
         </div>
         <div class="field">
           <div class="top"><label for="ta">Appretto (balls)</label><span class="hint" id="taHint">hours</span></div>
@@ -486,11 +510,57 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
             <button type="button" class="size" data-env="enva" data-v="0">Room</button>
             <button type="button" class="size" data-env="enva" data-v="1">Fridge</button>
           </div>
-          <div class="pair">
-            <input type="range" id="taR" min="1" max="72" step="0.5" value="5">
-            <input type="number" id="ta" min="0.5" max="200" step="0.5" value="5">
-          </div>
         </div>
+        <details class="more" id="moreTiming">
+          <summary><span class="more-label">Temperatures &amp; hours</span><span class="more-sum" id="sumTiming"></span></summary>
+          <div class="more-body">
+            <div class="row2">
+              <div class="field">
+                <div class="top"><label for="tfridge">Fridge</label><span class="hint deg">&deg;C</span></div>
+                <input type="number" id="tfridge" min="0" max="18" step="0.5" value="4">
+              </div>
+              <div class="field">
+                <div class="top"><label for="tflour">Flour</label><span class="hint deg">&deg;C</span></div>
+                <input type="number" id="tflour" min="0" max="35" step="0.5" value="24">
+              </div>
+            </div>
+            <div class="row2">
+              <div class="field">
+                <div class="top"><label for="tdb">Biga mixed at</label><span class="hint deg">&deg;C</span></div>
+                <input type="number" id="tdb" min="5" max="35" step="0.5" value="18">
+              </div>
+              <div class="field">
+                <div class="top"><label for="tdf">Dough mixed at</label><span class="hint deg">&deg;C</span></div>
+                <input type="number" id="tdf" min="10" max="35" step="0.5" value="24">
+              </div>
+            </div>
+            <div class="field">
+              <div class="top"><label for="r55">Rule of 55</label><span class="hint">sums to</span></div>
+              <input type="number" id="r55" min="45" max="65" step="0.5" value="55">
+            </div>
+            <div class="field">
+              <div class="top"><label for="tb">Biga ferment</label><span class="hint">hours</span></div>
+              <div class="pair">
+                <input type="range" id="tbR" min="2" max="72" step="0.5" value="18">
+                <input type="number" id="tb" min="1" max="200" step="0.5" value="18">
+              </div>
+            </div>
+            <div class="field">
+              <div class="top"><label for="tk">Bulk</label><span class="hint">hours</span></div>
+              <div class="pair">
+                <input type="range" id="tkR" min="0.5" max="36" step="0.5" value="2">
+                <input type="number" id="tk" min="0" max="200" step="0.5" value="2">
+              </div>
+            </div>
+            <div class="field">
+              <div class="top"><label for="ta">Appretto</label><span class="hint">hours</span></div>
+              <div class="pair">
+                <input type="range" id="taR" min="1" max="72" step="0.5" value="5">
+                <input type="number" id="ta" min="0.5" max="200" step="0.5" value="5">
+              </div>
+            </div>
+          </div>
+        </details>
       </fieldset>
 
       <div class="actions">
@@ -520,7 +590,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
             <span class="meta" id="bigaMeta"></span>
           </header>
           <div class="tw"><table>
-            <thead><tr><th>Ingredient</th><th>Grams</th><th>% flour</th></tr></thead>
+            <thead><tr><th>Ingredient</th><th class="wcol">Grams</th><th>% flour</th></tr></thead>
             <tbody id="bigaRows"></tbody>
           </table></div>
         </section>
@@ -531,7 +601,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
             <span class="meta" id="rinfMeta"></span>
           </header>
           <div class="tw"><table>
-            <thead><tr><th>Ingredient</th><th>Grams</th><th>% flour</th></tr></thead>
+            <thead><tr><th>Ingredient</th><th class="wcol">Grams</th><th>% flour</th></tr></thead>
             <tbody id="rinfRows"></tbody>
           </table></div>
         </section>
@@ -541,7 +611,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         <header><h2>Final dough</h2><span class="it" id="finalSub">what ends up in the panetti</span>
           <span class="meta" id="finalMeta"></span></header>
         <div class="tw"><table>
-          <thead><tr><th>Component</th><th>Grams</th><th>% flour</th></tr></thead>
+          <thead><tr><th>Component</th><th class="wcol">Grams</th><th>% flour</th></tr></thead>
           <tbody id="finalRows"></tbody>
         </table></div>
       </section>
@@ -606,7 +676,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 <script>
 (function(){
   "use strict";
-  var DEF = {troom:18,tfridge:4,envb:0,envk:0,enva:0,tdb:18,tdf:24,
+  var DEF = {imp:0,troom:24,tfridge:4,tflour:24,r55:55,envb:0,envk:0,enva:0,tdb:18,tdf:24,
              n:20,shape:0,d:12,k:22,pn:2,pw:30,ph:40,pk:2,unit:0,pc:0,w:264,
              h:65,salt:2.8,malt:0.5,bf:80,bh:45,sp:20,tb:18,tk:2,ta:5,bake:""};
   var KEYS = Object.keys(DEF);
@@ -676,14 +746,142 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     }catch(e){}
   }
 
-  /* ---------- formatting ---------- */
-  function g(v){
-    if(!isFinite(v)) return "—";
-    var a = Math.abs(v);
-    var s = a<50 ? v.toFixed(1) : Math.round(v).toLocaleString("en-US");
-    return s;
+  /* ---------- units ---------- */
+  /* State stays metric throughout; imperial is a skin over the display and the
+     input fields. The named rules keep their own metric constants, since the
+     rule of 22 is grams per inch and the teglia divisor is centimetres -- only
+     what they produce is converted. The rule of 55 is the exception: it is a
+     sum of three temperatures, so it has an exact Fahrenheit twin at 195,
+     because (9/5)(55) + 3(32) = 195. */
+  var OZ = 28.349523125;
+  function isImp(){ return S.imp === 1; }
+  /* Fields the viewer types in their own unit. Everything else -- percentages,
+     hours, counts, pan sides, and the metric rule constants -- is unitless or
+     stays as it is. */
+  var IMP_IN = {troom:"temp", tfridge:"temp", tflour:"temp", tdb:"temp", tdf:"temp", r55:"sum", w:"mass"};
+  var BOUNDS = {};
+  function toDisplay(k, v){
+    if(!isImp()) return v;
+    var kind = IMP_IN[k];
+    if(kind === "temp") return Math.round(toF(v));
+    if(kind === "sum")  return Math.round(v*9/5 + 96);
+    if(kind === "mass") return Math.round(v/OZ*10)/10;
+    return v;
   }
-  function gu(v){ return g(v)+" g"; }
+  function fromDisplay(k, v){
+    if(!isImp()) return v;
+    var kind = IMP_IN[k];
+    /* round on the way in so a Fahrenheit field does not litter state with
+       26.666666666666668; 0.1 is finer than a degree F either way */
+    if(kind === "temp") return Math.round(toC(v)*10)/10;
+    if(kind === "sum")  return Math.round((v - 96)*5/9*10)/10;
+    if(kind === "mass") return Math.round(v*OZ*10)/10;
+    return v;
+  }
+  function applyBounds(){
+    Object.keys(IMP_IN).forEach(function(k){
+      var el = $(k), b = BOUNDS[k]; if(!el || !b) return;
+      el.min  = toDisplay(k, b.min);
+      el.max  = toDisplay(k, b.max);
+      el.step = IMP_IN[k] === "mass" ? (isImp() ? 0.1 : b.step) : (isImp() ? 1 : b.step);
+    });
+  }
+  function toF(c){ return c * 9/5 + 32; }
+  function toC(f){ return (f - 32) * 5/9; }
+
+  /* ---------- progressive disclosure ---------- */
+  /* Which drawers are open is a view preference, not part of the recipe, so it
+     lives in its own storage key and stays out of KEYS and out of the share
+     link -- a link should not force four drawers open on someone else's
+     screen, and KEYS drives the input wiring, the boot coercion and query(). */
+  var OPEN_KEY = "biga.open.v1";
+  var MORE = ["moreBatch","moreFormula","moreBiga","moreTiming"];
+  var MORE_KEYS = {
+    moreBatch:   ["k","pk","unit","pc","pw","ph"],
+    moreFormula: ["salt","malt"],
+    moreBiga:    ["bf","bh","sp"],
+    moreTiming:  ["tfridge","tflour","r55","tdb","tdf"]
+  };
+  function readOpen(){
+    try{ return JSON.parse(localStorage.getItem(OPEN_KEY)) || {}; }catch(e){ return {}; }
+  }
+  function persistOpen(){
+    var o = {};
+    MORE.forEach(function(id){ var d = $(id); if(d) o[id] = d.open; });
+    try{ localStorage.setItem(OPEN_KEY, JSON.stringify(o)); }catch(e){}
+  }
+  /* A shared link can carry values that live behind a drawer, so a section
+     whose hidden settings are off-default opens itself unless the viewer has
+     said otherwise. inPlay() keeps a tonda baker from being told about pans. */
+  function moreDirty(id){
+    var off = MORE_KEYS[id].filter(inPlay).some(function(k){ return S[k] !== DEF[k]; });
+    // tb/tk/ta differ from DEF whenever a temperature moves, so a stage counts
+    // as touched only once it has stopped following the model
+    if(id === "moreTiming") off = off || STAGES.some(function(k){ return !onModel(k); });
+    return off;
+  }
+  function syncMore(){
+    MORE.forEach(function(id){
+      var d = $(id); if(!d) return;
+      d.firstElementChild.toggleAttribute("data-dirty", moreDirty(id));
+    });
+    $("sumBatch").textContent   = isPan() ? "area \u00f7 " + num(S.pk) : S.k + " g per inch";
+    $("sumFormula").textContent = num(S.salt) + " % salt \u00b7 " + num(S.malt) + " % malt";
+    $("sumBiga").textContent    = S.bf + " / " + num(S.bh) + " / " + S.sp + " %";
+    $("sumTiming").textContent  = "fridge " + tmpU(S.tfridge) + " \u00b7 "
+                                + num(S.tb) + " / " + num(S.tk) + " / " + num(S.ta) + " h";
+  }
+
+  /* ---------- formatting ---------- */
+  function wtParts(v){
+    if(!isFinite(v)) return ["\u2014",""];
+    if(!isImp()){
+      var a = Math.abs(v);
+      return [a<50 ? v.toFixed(1) : Math.round(v).toLocaleString("en-US"), "g"];
+    }
+    var o = v/OZ, m = Math.abs(o);
+    if(m < 16) return [m < 1 ? o.toFixed(2) : o.toFixed(1), "oz"];
+    var lb = Math.floor(o/16);
+    return [lb + " lb " + (o - lb*16).toFixed(1), "oz"];
+  }
+  function g(v){ return wtParts(v)[0]; }
+  function gu(v){ var q = wtParts(v); return q[0] + " " + q[1]; }
+  function wtUnit(){ return isImp() ? "oz" : "g"; }
+  /* the pdf's weight column is bare numbers under a GRAMS heading, which
+     only works while every row is the same unit; lb-and-oz has to say so */
+  function pdfWt(v){ return isImp() ? gu(v) : g(v); }
+  function gsm(v){ var q = wtParts(v); return q[0] + " <small>" + q[1] + "</small>"; }
+
+  function tmp(c){ return isImp() ? String(Math.round(toF(c))) : num(round5(c)); }
+  function degU(){ return isImp() ? " \u00b0F" : " \u00b0C"; }
+  function tmpU(c){ return tmp(c) + degU(); }
+
+  /* Cups are volume and flour runs 120-145 g a cup depending on the scoop, so
+     they are an approximation beside the weight, never instead of it. Rendered
+     as plain "1 5/8" because the PDF's subset fonts carry no vulgar fractions. */
+  var CUP = {flour:125, water:236.6, starter:227, salt:288, malt:144};
+  function fracOf(x, d){
+    var w = Math.floor(x), e = Math.round((x - w) * d);
+    if(e === d){ w++; e = 0; }
+    if(!e) return String(w);
+    var a = e, b = d; while(b){ var r = a % b; a = b; b = r; }
+    var s = (e/a) + "/" + (d/a);
+    return w ? w + " " + s : s;
+  }
+  function withCups(v, kind){
+    var c = cupsOf(v, kind);
+    return gu(v) + (c ? " (" + c + ")" : "");
+  }
+  function cupsOf(v, kind){
+    if(!isImp() || !isFinite(v) || v <= 0.1 || !CUP[kind]) return "";
+    var c = v / CUP[kind];
+    /* half a cup is where scooping beats spooning; below it, 5 tbsp of salt
+       is a usable instruction and "1/4 cup" is not */
+    if(c >= 0.5) return "\u2248 " + fracOf(c,8) + (c >= 1.9 ? " cups" : " cup");
+    var tsp = c * 48;
+    if(tsp >= 3) return "\u2248 " + fracOf(tsp/3,4) + " tbsp";
+    return "\u2248 " + fracOf(tsp,4) + " tsp";
+  }
   function pc(v){ return (v*100).toFixed(1)+"%"; }
 
   /* ---------- shape ---------- */
@@ -732,7 +930,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   var BOLD  = function(s){ return "<b>" + s + "</b>"; };
   var PLAIN = function(s){ return s; };
   function staglioText(b){
-    var q = b(count() + " × " + g(S.w) + " g");
+    var q = b(count() + " × " + gu(S.w));
     return isPan()
       ? "Divide into " + q + " panetti, one per " + panLabel() + " teglia. Round them loosely — a teglia dough wants to stay slack — and set them in an oiled box."
       : "Divide into " + q + " panetti, round them tight, and set them in a proofing box with room to spread.";
@@ -741,8 +939,8 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
      "Add 0 g of flour" is not an instruction */
   function rinfAdd(b, d){
     return d.noRinfFlour
-      ? "Add " + b(gu(d.malt)) + " of malt"
-      : "Add " + b(gu(d.rFlour)) + " of flour and " + b(gu(d.malt)) + " of malt";
+      ? "Add " + b(withCups(d.malt,"malt")) + " of malt"
+      : "Add " + b(withCups(d.rFlour,"flour")) + " of flour and " + b(withCups(d.malt,"malt")) + " of malt";
   }
   function rinfNote(d){
     return d.noRinfFlour ? "water, then malt and salt" : "remaining flour and water, then malt and salt";
@@ -756,7 +954,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       : "Proof until each panetto is domed, slack and holds a slow dimple. Then open by hand and bake as hot as your oven goes.";
   }
   function staglioNote(){
-    return count() + " × " + g(S.w) + " g" + (isPan() ? ", one per teglia" : " panetti");
+    return count() + " × " + gu(S.w) + (isPan() ? ", one per teglia" : " panetti");
   }
 
   /* ---------- fermentation ---------- */
@@ -838,9 +1036,18 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     return (lo + hi) / 2;
   }
 
+  /* La regola del 55: room + flour + water should sum to the constant, so the
+     water carries whatever the room and the flour do not. 55 is the usual
+     figure; a hotter mixer puts more friction into the dough, so the constant
+     is editable the way the rule of 22 is. */
+  function waterTemp(){ return S.r55 - S.troom - S.tflour; }
+  function waterSum(){ return isImp()
+    ? Math.round(S.r55*9/5 + 96) + " \u2212 " + tmp(S.troom) + " \u2212 " + tmp(S.tflour)
+    : num(S.r55) + " \u2212 " + num(S.troom) + " \u2212 " + num(S.tflour); }
+
   function envTemp(e){ return e ? S.tfridge : S.troom; }
   function envWord(e){ return e ? "fridge" : "room"; }
-  function envPhrase(e){ return num(envTemp(e)) + " \u00b0C" + (e ? " in the fridge" : ""); }
+  function envPhrase(e){ return tmpU(envTemp(e)) + (e ? " in the fridge" : ""); }
   function bulkText(){
     return "Covered at " + envPhrase(S.envk) + ", with a fold at the halfway point if the dough feels slack.";
   }
@@ -852,7 +1059,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   }
   function envLine(){
     return [["biga", S.envb], ["bulk", S.envk], ["balls", S.enva]].map(function(x){
-      return x[0] + " " + num(envTemp(x[1])) + " \u00b0C";
+      return x[0] + " " + tmpU(envTemp(x[1]));
     }).join(" \u00b7 ");
   }
   function round5(h){ return Math.round(h * 2) / 2; }
@@ -905,23 +1112,26 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   }
 
   /* ---------- rendering ---------- */
-  function row(name,val,pct,cls){
+  function row(name,val,pct,cls,kind){
+    var cup = (kind && typeof val !== "string") ? cupsOf(val, kind) : "";
     return "<tr"+(cls?' class="'+cls+'"':"")+"><td>"+name+"</td><td class=\"num\">"+
-           (typeof val==="string"?val:gu(val))+"</td><td class=\"pctc\">"+pct+"</td></tr>";
+           (typeof val==="string"?val:gu(val))+
+           (cup ? '<span class="cup">'+cup+'</span>' : "")+
+           "</td><td class=\"pctc\">"+pct+"</td></tr>";
   }
 
   function renderTables(d){
-    $("sDough").innerHTML = g(d.W)+" <small>g</small>";
-    $("sFlour").innerHTML = g(d.F)+" <small>g</small>";
-    $("sWater").innerHTML = g(d.Wt)+" <small>g</small>";
-    $("sSalt").innerHTML  = g(d.salt)+" <small>g</small>";
-    $("sMalt").innerHTML  = g(d.malt)+" <small>g</small>";
+    $("sDough").innerHTML = gsm(d.W);
+    $("sFlour").innerHTML = gsm(d.F);
+    $("sWater").innerHTML = gsm(d.Wt);
+    $("sSalt").innerHTML  = gsm(d.salt);
+    $("sMalt").innerHTML  = gsm(d.malt);
 
     var F = d.F;
     var b = "";
-    b += row("Flour <span class=\"tag b\">add</span>", d.bAddF, pc(d.bAddF/F));
-    b += row("Water <span class=\"tag b\">add</span>", d.bAddW, pc(d.bAddW/F));
-    b += row("Sourdough starter", d.starter, pc(d.starter/F), "starter");
+    b += row("Flour <span class=\"tag b\">add</span>", d.bAddF, pc(d.bAddF/F), "", "flour");
+    b += row("Water <span class=\"tag b\">add</span>", d.bAddW, pc(d.bAddW/F), "", "water");
+    b += row("Sourdough starter", d.starter, pc(d.starter/F), "starter", "starter");
     b += row("<em>&nbsp;&nbsp;· flour from starter</em>", d.sf, pc(d.sf/F), "starter");
     b += row("<em>&nbsp;&nbsp;· water from starter</em>", d.sw, pc(d.sw/F), "starter");
     b += row("Biga total", d.bigaMass, pc(d.bigaMass/F), "sum");
@@ -931,10 +1141,10 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 
     var r = "";
     r += row("Biga (all of it)", d.bigaMass, pc(d.bigaMass/F));
-    if(!d.noRinfFlour) r += row("Flour <span class=\"tag r\">add</span>", d.rFlour, pc(d.rFlour/F));
-    r += row("Water <span class=\"tag r\">add</span>", d.rWater, pc(d.rWater/F));
-    r += row("Salt", d.salt, pc(d.salt/F));
-    r += row("Malt", d.malt, pc(d.malt/F));
+    if(!d.noRinfFlour) r += row("Flour <span class=\"tag r\">add</span>", d.rFlour, pc(d.rFlour/F), "", "flour");
+    r += row("Water <span class=\"tag r\">add</span>", d.rWater, pc(d.rWater/F), "", "water");
+    r += row("Salt", d.salt, pc(d.salt/F), "", "salt");
+    r += row("Malt", d.malt, pc(d.malt/F), "", "malt");
     r += row("Final dough", d.finalMass, pc(d.finalMass/F), "sum");
     $("rinfRows").innerHTML = r;
     var rh = d.rFlour>0 ? (d.rWater/d.rFlour) : NaN;
@@ -942,13 +1152,13 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
                               + (isFinite(rh)? (rh*100).toFixed(0)+"% of that flour" : "—"));
 
     var f = "";
-    f += row("Flour", d.F, "100.0%");
-    f += row("Water", d.Wt, pc(d.Wt/F));
-    f += row("Salt", d.salt, pc(d.salt/F));
-    f += row("Malt", d.malt, pc(d.malt/F));
+    f += row("Flour", d.F, "100.0%", "", "flour");
+    f += row("Water", d.Wt, pc(d.Wt/F), "", "water");
+    f += row("Salt", d.salt, pc(d.salt/F), "", "salt");
+    f += row("Malt", d.malt, pc(d.malt/F), "", "malt");
     f += row("Dough", d.W, pc(d.W/F), "sum");
     $("finalRows").innerHTML = f;
-    $("finalMeta").textContent = count()+" × "+g(S.w)+" g "+pieceWord(count())+" · "+sizeLine();
+    $("finalMeta").textContent = count()+" × "+gu(S.w)+" "+pieceWord(count())+" · "+sizeLine();
   }
 
   function renderAlerts(d){
@@ -961,12 +1171,17 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       STAGES.forEach(function(k){
         var st = SCHED[k], lbl = {tb:"biga",tk:"bulk",ta:"appretto"}[k];
         if(st.hours >= 399) a.push(["The " + lbl + " never gets there",
-          "at " + num(st.env) + " \u00b0C this dough ferments too slowly to finish. Warm the stage or raise the inoculation."]);
+          "at " + tmpU(st.env) + " this dough ferments too slowly to finish. Warm the stage or raise the inoculation."]);
         else if(st.hours > 72) a.push(["A very long " + lbl,
-          num(round5(st.hours)) + " h at " + num(st.env) + " \u00b0C. Workable, but the dough will be markedly more acidic by the end."]);
+          num(round5(st.hours)) + " h at " + tmpU(st.env) + ". Workable, but the dough will be markedly more acidic by the end."]);
       });
+      var tw = waterTemp();
+      if(tw < 2) a.push(["The rule of 55 asks for water at " + tmpU(tw),
+        "below freezing is not pourable \u2014 weigh part of the water as ice, or cool the flour, which counts the same against the sum."]);
+      else if(tw > 35) a.push(["The rule of 55 asks for water at " + tmpU(tw),
+        "that is warm enough to start hurting the yeast on contact. Check the room and flour figures before trusting it."]);
       if(Math.max(S.envb ? 0 : S.troom, S.tdf) > 28) a.push(["Warm enough to shift the flavour",
-        "above about 28 \u00b0C the bacteria outrun the yeast. The timings still hold, but expect a sourer, slacker dough than the same formula run cool."]);
+        "above about " + tmpU(28) + " the bacteria outrun the yeast. The timings still hold, but expect a sourer, slacker dough than the same formula run cool."]);
     }
     $("alerts").innerHTML = a.map(function(x){
       return "<div class=\"alert\"><b>"+x[0]+"</b><span>"+x[1]+"</span></div>";
@@ -975,10 +1190,10 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 
   function renderMethod(d){
     var steps = [
-      ["Mix the biga", "Break <b>"+gu(d.starter)+"</b> of starter into <b>"+gu(Math.max(d.bAddW,0))+"</b> of cool water, then rub in <b>"+gu(Math.max(d.bAddF,0))+"</b> of flour until every crumb is damp. Shaggy, not smooth — a stiff biga at "+S.bh+"% is meant to look under-mixed."],
-      ["Ferment "+num(S.tb)+" h", "Hold at "+num(envTemp(S.envb))+" °C"+(S.envb?" in the fridge":"")+". It is ready when it smells of yogurt and hazelnut and has roughly doubled; the hours above already follow the temperature, so trust the dough over the clock."],
-      ["Rinfresco", "Break the <b>"+gu(d.bigaMass)+"</b> of biga into <b>"+gu(Math.max(d.rWater,0))+"</b> of water, hold back a little to dissolve the salt. "+rinfAdd(BOLD,d)+", mix to a rough mass, rest 20 min."],
-      ["Salt and develop", "Add <b>"+gu(d.salt)+"</b> of salt with the reserved water and mix until the dough clears the bowl and passes a windowpane. Bring it off the mixer at <b>"+num(S.tdf)+" °C</b>."],
+      ["Mix the biga", "Break <b>"+withCups(d.starter,"starter")+"</b> of starter into <b>"+withCups(Math.max(d.bAddW,0),"water")+"</b> of cool water, then rub in <b>"+withCups(Math.max(d.bAddF,0),"flour")+"</b> of flour until every crumb is damp. Shaggy, not smooth — a stiff biga at "+S.bh+"% is meant to look under-mixed."],
+      ["Ferment "+num(S.tb)+" h", "Hold at "+envPhrase(S.envb)+". It is ready when it smells of yogurt and hazelnut and has roughly doubled; the hours above already follow the temperature, so trust the dough over the clock."],
+      ["Rinfresco", "Break the <b>"+gu(d.bigaMass)+"</b> of biga into <b>"+gu(Math.max(d.rWater,0))+"</b> of water at <b>"+tmpU(waterTemp())+"</b>, hold back a little to dissolve the salt. "+rinfAdd(BOLD,d)+", mix to a rough mass, rest 20 min."],
+      ["Salt and develop", "Add <b>"+withCups(d.salt,"salt")+"</b> of salt with the reserved water and mix until the dough clears the bowl and passes a windowpane. Bring it off the mixer at <b>"+tmpU(S.tdf)+"</b>."],
       ["Bulk "+num(S.tk)+" h", bulkText()],
       ["Staglio", staglioText(BOLD)],
       ["Appretto "+num(S.ta)+" h", "Hold at " + envPhrase(S.enva) + temperText() + ". " + apprettoText()]
@@ -1023,7 +1238,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 
   function recipeText(d){
     var L = [];
-    L.push("BIGA & RINFRESCO — "+count()+" x "+g(S.w)+" g "+pieceWord(count())+"  ("+sizeTail()+")");
+    L.push("BIGA & RINFRESCO — "+count()+" x "+gu(S.w)+" "+pieceWord(count())+"  ("+sizeTail()+")");
     L.push(S.h+"% hydration · "+S.bf+"% biga at "+S.bh+"% · starter "+S.sp+"% · salt "+S.salt+"% · malt "+S.malt+"%");
     L.push("");
     L.push("BIGA");
@@ -1062,17 +1277,23 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     var pan = isPan();
     $("roundFields").hidden = pan;
     $("panFields").hidden = !pan;
+    $("roundMore").hidden = pan;
+    $("panMore").hidden = !pan;
     $("wLabel").textContent = pan ? "Weight per teglia" : "Weight per panetto";
     $("pwHint").textContent = $("phHint").textContent = S.unit ? "inches" : "cm";
     $("pwLabel").textContent = isRoundPan() ? "Pan diameter" : "Pan width";
     $("phField").hidden = isRoundPan();
     $("finalSub").textContent = pan ? "what goes into each teglia" : "what ends up in the panetti";
+    document.querySelectorAll("th.wcol").forEach(function(h){ h.textContent = isImp() ? "Weight" : "Grams"; });
+    document.querySelectorAll("span.deg").forEach(function(h){ h.textContent = isImp() ? "\u00b0F" : "\u00b0C"; });
+    syncMore();
 
     pressed(".shapes .size", function(b){ return Number(b.dataset.shape) === S.shape; });
     pressed(".sizes .size", function(b){
       return !pan && Number(b.dataset.d) === Number(S.d) && onRule();
     });
-    pressed(".units .size", function(b){ return Number(b.dataset.unit) === S.unit; });
+    pressed(".units .size[data-unit]", function(b){ return Number(b.dataset.unit) === S.unit; });
+    pressed(".units .size[data-imp]", function(b){ return Number(b.dataset.imp) === S.imp; });
     pressed(".pantype .size", function(b){ return Number(b.dataset.pc) === S.pc; });
     pressed(".pans .size", function(b){
       var round = Number(b.dataset.pc || 0);
@@ -1081,12 +1302,12 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     });
 
     document.querySelectorAll(".sizes .size .g").forEach(function(s){
-      s.textContent = Math.round(Number(s.dataset.g) * S.k) + " g";
+      s.textContent = gu(Number(s.dataset.g) * S.k);
     });
     document.querySelectorAll(".pans .size .g").forEach(function(s){
       var b = s.parentNode, u = Number(b.dataset.unit) ? IN : 1, w = Number(b.dataset.w)*u;
       var area = Number(b.dataset.pc) ? Math.PI*w*w/4 : w * Number(b.dataset.h)*u;
-      s.textContent = Math.round(area / S.pk) + " g";
+      s.textContent = gu(area / S.pk);
     });
 
     var lim = sideLimits();
@@ -1098,18 +1319,21 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       ? (onRule() ? (isRoundPan()
                       ? "= " + Math.round(panArea()) + " cm² (" + num(S.pw) + (S.unit ? "&Prime;" : " cm") + " round) ÷ " + S.pk
                       : "= " + num(S.pw) + " × " + num(S.ph) + (S.unit ? "&Prime;" : " cm") + " ÷ " + S.pk)
-                  : "custom · " + panLabel() + " would make " + ruleWeight() + " g")
+                  : "custom · " + panLabel() + " would make " + gu(ruleWeight()))
       : (onRule() ? "= " + num(S.d) + "&Prime; × " + S.k + " g"
                   : "custom · " + (S.w / S.k).toFixed(1) + "&Prime; at " + S.k + " g/in");
   }
 
   function syncInputs(){
+    applyBounds();
     KEYS.forEach(function(k){
       var el = $(k); if(!el) return;
-      if(el.value !== String(S[k])) el.value = S[k];
+      var v = String(toDisplay(k, S[k]));
+      if(el.value !== v) el.value = v;
     });
     PAIRS.forEach(function(p){ var r = $(p[1]); if(r) r.value = S[p[0]]; });
     $("hOut").textContent = Number(S.h).toFixed(1)+" %";
+    syncWater();
     STAGES.forEach(function(k){ $(k+"Hint").textContent = stageHint(k); });
     ["envb","envk","enva"].forEach(function(e){
       pressed('.envs .size[data-env="'+e+'"]', function(b){ return Number(b.dataset.v) === S[e]; });
@@ -1135,6 +1359,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
      type yourself is left alone until the next temperature change. */
   var MODEL = {tb:DEF.tb, tk:DEF.tk, ta:DEF.ta}, SCHED = null;
   var STAGES = ["tb","tk","ta"];
+  var GIVEN = {};   // stage hours that actually arrived in a link or storage
 
   /* `seed` is for the first run, where there is no previous model to compare
      against: hours arriving from a link or storage count as following when they
@@ -1147,13 +1372,27 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     STAGES.forEach(function(k){
       var was = MODEL[k];
       MODEL[k] = round5(s[k].hours);
-      if(Math.abs(S[k] - (seed ? MODEL[k] : was)) < 0.26) S[k] = MODEL[k];
+      /* On the first run an hour nobody supplied simply follows the model --
+         the stored DEF figures are the calibration's answer, not an answer for
+         whatever room this visitor is actually in. One that WAS supplied counts
+         as following only if it matches what the model makes of the settings it
+         came with. Afterwards, a stage follows if it matched the PREVIOUS model,
+         so it keeps following as the temperatures move. */
+      var follow = seed ? (!GIVEN[k] || Math.abs(S[k] - MODEL[k]) < 0.26)
+                        : Math.abs(S[k] - was) < 0.26;
+      if(follow) S[k] = MODEL[k];
     });
   }
   function onModel(k){ return Math.abs(S[k] - MODEL[k]) < 0.26; }
 
+  function syncWater(){
+    $("twater").textContent = tmpU(waterTemp());
+    $("twaterHint").textContent = "= " + waterSum();
+  }
+
   /* refresh the stage fields without fighting the one being typed in */
   function syncStages(skip){
+    syncWater();
     STAGES.forEach(function(k){
       if(k !== skip){
         if($(k).value !== String(S[k])) $(k).value = S[k];
@@ -1167,8 +1406,8 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     if(!SCHED) return "hours";
     var st = SCHED[k], envName = (k === "tb" ? S.envb : k === "tk" ? S.envk : S.enva) ? "fridge" : "room";
     var ends = endTemp(S[k], st.T0, st.env, st.tc);
-    var where = num(round5(st.T0)) + " \u2192 " + num(round5(ends)) + " \u00b0C in the " + envName;
-    return onModel(k) ? where : "custom \u00b7 model says " + num(MODEL[k]) + " h";
+    var where = tmp(st.T0) + " \u2192 " + tmpU(ends) + " in the " + envName;
+    return num(S[k]) + " h \u00b7 " + (onModel(k) ? where : "model says " + num(MODEL[k]) + " h");
   }
 
   function update(){ applySchedule(); syncInputs(); render(); persist(); }
@@ -1179,7 +1418,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       if(k === "bake"){ S.bake = el.value; render(); persist(); return; }
       var v = parseFloat(el.value);
       if(!isFinite(v)) { render(); return; }
-      S[k] = clamp(el, v);
+      S[k] = fromDisplay(k, clamp(el, v));
       var pair = PAIRS.filter(function(p){ return p[0]===k; })[0];
       if(pair) $(pair[1]).value = S[k];
       if(k==="h") $("hOut").textContent = Number(S.h).toFixed(1)+" %";
@@ -1191,11 +1430,15 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       // one number cannot back-solve two pan sides, so a typed teglia weight
       // just becomes a custom weight and the sides stay put
       if(k==="w" && !isPan() && S.k > 0){ S.d = Math.round((S.w / S.k) * 2) / 2; $("d").value = S.d; $("dR").value = S.d; }
+      if(k==="d" || k==="k" || k==="pw" || k==="ph" || k==="pk") $("w").value = toDisplay("w", S.w);
       applySchedule(); syncStages(k);
       syncShape();
       render(); persist();
     });
-    el.addEventListener("change", function(){ if(k!=="bake"){ var v=parseFloat(el.value); if(isFinite(v)) S[k]=clamp(el,v); } update(); });
+    el.addEventListener("change", function(){
+      if(k!=="bake"){ var v=parseFloat(el.value); if(isFinite(v)) S[k]=fromDisplay(k, clamp(el,v)); }
+      update();
+    });
   });
 
   PAIRS.forEach(function(p){
@@ -1219,6 +1462,10 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       MODEL[{envb:"tb",envk:"tk",enva:"ta"}[b.dataset.env]] = S[{envb:"tb",envk:"tk",enva:"ta"}[b.dataset.env]];
       update();
     });
+  });
+
+  document.querySelectorAll('.units .size[data-imp]').forEach(function(b){
+    b.addEventListener("click", function(){ S.imp = Number(b.dataset.imp); update(); });
   });
 
   document.querySelectorAll(".shapes .size").forEach(function(b){
@@ -1339,7 +1586,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     function rule(x,yy,w,c,h){ bar(x,yy,w,h||0.2,c); }
     function vline(x,y0,y1,c){ doc.setDrawColor(c[0],c[1],c[2]); doc.setLineWidth(0.2); doc.line(x,y0,x,y1); }
 
-    var foot = count() + " × " + g(S.w) + " g " + pieceWord(count()) + "  ·  " + Number(S.h).toFixed(1) + "% hydration  ·  "
+    var foot = count() + " × " + gu(S.w) + " " + pieceWord(count()) + "  ·  " + Number(S.h).toFixed(1) + "% hydration  ·  "
              + S.bf + "% biga at " + Number(S.bh).toFixed(1) + "%";
 
     function footer(){
@@ -1365,7 +1612,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         PW - MR, y, {align:"right"});
     y += 6.6;
     fnt("Plex","normal",9.6,C.mid);
-    txt(count() + " " + pieceWord(count()) + " of " + g(S.w) + " g  —  " + sizeTail(), ML, y);
+    txt(count() + " " + pieceWord(count()) + " of " + gu(S.w) + "  —  " + sizeTail(), ML, y);
     y += 4.2;
     rule(ML, y, CW, C.ink, 0.7); y += 0.7;
 
@@ -1382,7 +1629,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       txt(s[1], cx, sy + 14.4);
       var wnum = doc.getTextWidth(s[1]);
       fnt("Plex","normal",7.4,C.muted);
-      txt("g", cx + wnum + 1.4, sy + 14.4);
+      txt(wtUnit(), cx + wnum + 1.4, sy + 14.4);
     });
     y = sy + 18.5;
     rule(ML, y, CW, C.line, 0.3); y += 6.2;
@@ -1407,7 +1654,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       var gR = x + w - (w > 120 ? 32 : 19), pR = x + w, yy = y0;
       fnt("PlexCond","bold",6.3,C.muted);
       txt("INGREDIENT", x, yy + 3.2, {charSpace:0.3});
-      txt("GRAMS", gR, yy + 3.2, {align:"right", charSpace:0.3});
+      txt(isImp() ? "WEIGHT" : "GRAMS", gR, yy + 3.2, {align:"right", charSpace:0.3});
       txt("% FLOUR", pR, yy + 3.2, {align:"right", charSpace:0.3});
       yy += 5.4;
       rule(x, yy, w, C.line, 0.3); yy += 0.3;
@@ -1446,20 +1693,20 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 
     var F = d.F, colW = (CW - 8) / 2;
     var bigaRows = [
-      {label:"Flour", grams:g(d.bAddF), pct:pc(d.bAddF/F)},
-      {label:"Water", grams:g(d.bAddW), pct:pc(d.bAddW/F)},
-      {label:"Sourdough starter", grams:g(d.starter), pct:pc(d.starter/F)},
-      {label:"flour from the starter", grams:g(d.sf), pct:pc(d.sf/F), kind:"sub"},
-      {label:"water from the starter", grams:g(d.sw), pct:pc(d.sw/F), kind:"sub"},
-      {label:"Biga total", grams:g(d.bigaMass), pct:pc(d.bigaMass/F), kind:"sum"}
+      {label:"Flour", grams:pdfWt(d.bAddF), pct:pc(d.bAddF/F)},
+      {label:"Water", grams:pdfWt(d.bAddW), pct:pc(d.bAddW/F)},
+      {label:"Sourdough starter", grams:pdfWt(d.starter), pct:pc(d.starter/F)},
+      {label:"flour from the starter", grams:pdfWt(d.sf), pct:pc(d.sf/F), kind:"sub"},
+      {label:"water from the starter", grams:pdfWt(d.sw), pct:pc(d.sw/F), kind:"sub"},
+      {label:"Biga total", grams:pdfWt(d.bigaMass), pct:pc(d.bigaMass/F), kind:"sum"}
     ];
     var rinfRows = [
-      {label:"Biga, all of it", grams:g(d.bigaMass), pct:pc(d.bigaMass/F)},
-      {label:"Flour", grams:g(d.rFlour), pct:pc(d.rFlour/F), skip:d.noRinfFlour},
-      {label:"Water", grams:g(d.rWater), pct:pc(d.rWater/F)},
-      {label:"Salt", grams:g(d.salt), pct:pc(d.salt/F)},
-      {label:"Malt", grams:g(d.malt), pct:pc(d.malt/F)},
-      {label:"Final dough", grams:g(d.finalMass), pct:pc(d.finalMass/F), kind:"sum"}
+      {label:"Biga, all of it", grams:pdfWt(d.bigaMass), pct:pc(d.bigaMass/F)},
+      {label:"Flour", grams:pdfWt(d.rFlour), pct:pc(d.rFlour/F), skip:d.noRinfFlour},
+      {label:"Water", grams:pdfWt(d.rWater), pct:pc(d.rWater/F)},
+      {label:"Salt", grams:pdfWt(d.salt), pct:pc(d.salt/F)},
+      {label:"Malt", grams:pdfWt(d.malt), pct:pc(d.malt/F)},
+      {label:"Final dough", grams:pdfWt(d.finalMass), pct:pc(d.finalMass/F), kind:"sum"}
     ].filter(function(r){ return !r.skip; });
     var rh = d.rFlour > 0 ? (d.rWater / d.rFlour * 100).toFixed(0) + "% of that flour" : "—";
     var e1 = drawStage(ML, colW, y, "Biga", "impasto indiretto",
@@ -1480,27 +1727,27 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 
     heading("Final dough", isPan() ? "what goes into each teglia" : "what ends up in the panetti");
     y = drawTable(ML, CW, y, [
-      {label:"Flour", grams:g(d.F), pct:"100.0%"},
-      {label:"Water", grams:g(d.Wt), pct:pc(d.Wt/F)},
-      {label:"Salt", grams:g(d.salt), pct:pc(d.salt/F)},
-      {label:"Malt", grams:g(d.malt), pct:pc(d.malt/F)},
-      {label:count() + " " + pieceWord(count()) + " of " + g(S.w) + " g", grams:g(d.W), pct:pc(d.W/F), kind:"sum"}
+      {label:"Flour", grams:pdfWt(d.F), pct:"100.0%"},
+      {label:"Water", grams:pdfWt(d.Wt), pct:pc(d.Wt/F)},
+      {label:"Salt", grams:pdfWt(d.salt), pct:pc(d.salt/F)},
+      {label:"Malt", grams:pdfWt(d.malt), pct:pc(d.malt/F)},
+      {label:count() + " " + pieceWord(count()) + " of " + gu(S.w), grams:pdfWt(d.W), pct:pc(d.W/F), kind:"sum"}
     ]) + 10;
 
     /* ---- method ---- */
     nextPage();
     heading("Method", "in order, with this batch's weights");
     var steps = [
-      ["Mix the biga", "Break " + gu(d.starter) + " of starter into " + gu(Math.max(d.bAddW,0))
-        + " of cool water, then rub in " + gu(Math.max(d.bAddF,0))
+      ["Mix the biga", "Break " + withCups(d.starter,"starter") + " of starter into " + withCups(Math.max(d.bAddW,0),"water")
+        + " of cool water, then rub in " + withCups(Math.max(d.bAddF,0),"flour")
         + " of flour until every crumb is damp. Shaggy, not smooth — a stiff biga at "
         + S.bh + "% is meant to look under-mixed."],
-      ["Ferment " + num(S.tb) + " h", "Hold at " + num(envTemp(S.envb)) + " \u00b0C" + (S.envb ? " in the fridge" : "")
+      ["Ferment " + num(S.tb) + " h", "Hold at " + envPhrase(S.envb)
         + ". It is ready when it smells of yogurt and hazelnut and has roughly doubled; the hours above already follow the temperature, so trust the dough over the clock."],
       ["Rinfresco", "Break the " + gu(d.bigaMass) + " of biga into " + gu(Math.max(d.rWater,0))
-        + " of water, holding back a little to dissolve the salt. " + rinfAdd(PLAIN,d)
+        + " of water at " + tmpU(waterTemp()) + ", holding back a little to dissolve the salt. " + rinfAdd(PLAIN,d)
         + ", mix to a rough mass, rest 20 minutes."],
-      ["Salt and develop", "Add " + gu(d.salt) + " of salt with the reserved water and mix until the dough clears the bowl and passes a windowpane. Bring it off the mixer at " + num(S.tdf) + " \u00b0C."],
+      ["Salt and develop", "Add " + withCups(d.salt,"salt") + " of salt with the reserved water and mix until the dough clears the bowl and passes a windowpane. Bring it off the mixer at " + tmpU(S.tdf) + "."],
       ["Bulk " + num(S.tk) + " h", bulkText()],
       ["Staglio", staglioText(PLAIN)],
       ["Appretto " + num(S.ta) + " h", "Hold at " + envPhrase(S.enva) + temperText() + ". " + apprettoText()]
@@ -1643,6 +1890,10 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   S.shape = S.shape === 1 ? 1 : 0;
   S.unit  = S.unit  === 1 ? 1 : 0;
   S.pc    = S.pc    === 1 ? 1 : 0;
+  S.imp   = S.imp   === 1 ? 1 : 0;
+  Object.keys(IMP_IN).forEach(function(k){
+    var el = $(k); if(el) BOUNDS[k] = {min:parseFloat(el.min), max:parseFloat(el.max), step:parseFloat(el.step)};
+  });
   ["envb","envk","enva"].forEach(function(e){ S[e] = S[e] === 1 ? 1 : 0; });
   // settings saved before the rule of 22 carry a weight but no diameter
   if(!isPan() && !("d" in stored) && !("d" in hashed) && S.k > 0) S.d = Math.round((S.w / S.k) * 2) / 2;
@@ -1657,7 +1908,14 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     if(F0 > 0) S.sp = Math.min(hi, Math.max(lo, Math.round(legacySt / F0 * 100)));
   }
   if(!S.bake) S.bake = defaultBake();
+  STAGES.forEach(function(k){ GIVEN[k] = (k in stored) || (k in hashed); });
   applySchedule(true);
+  var openState = readOpen();
+  MORE.forEach(function(id){
+    var d = $(id); if(!d) return;
+    d.open = (id in openState) ? !!openState[id] : moreDirty(id);
+    d.addEventListener("toggle", persistOpen);
+  });
   update();
 })();
 </script>

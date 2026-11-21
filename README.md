@@ -34,8 +34,22 @@ want — a round panetto, or a teglia sized by the Italian pan rule.
 - **Fermentation times are solved, not typed.** Each stage — biga, bulk, appretto — names whether it
   rises in the room or the fridge, and its hours come from the dough's temperature and its surroundings.
   Type an hour figure yourself and that stage stays put until the next temperature change.
+- **The rule of 55** gives the water temperature for the impasto: room + flour + water sum to 55, so the
+  water carries whatever the room and the flour do not. The constant is editable, since a hotter mixer
+  puts more friction into the dough.
 - **Timetable** counts back from the bake time through appretto, staglio, bulk, rinfresco and the biga,
   and adds a bench-tempering step when the balls come out of the fridge.
+- **Metric or imperial.** One switch moves the whole page to °F and oz/lb. State stays metric
+  throughout and imperial is a skin over the display and the input fields, so nothing drifts. Cups and
+  spoons appear beside the weights as a marked approximation, never instead of them — flour runs
+  120–145 g a cup depending on the scoop, and this is a page about getting the grams right. The named
+  rules keep their metric constants, except the rule of 55, which has an exact Fahrenheit twin at 195
+  because `(9/5)(55) + 3(32) = 195`.
+- **Advanced settings fold away.** Each section keeps what you change between two bakes of the same
+  recipe and folds the rest behind a disclosure whose closed state still prints what it is hiding —
+  `Biga formula / 80 / 45 / 20 %`. A section opens itself when a link carries a value it hides, and
+  marks itself when you have changed one. Open or closed is a view preference, kept on the device and
+  out of the share link.
 - **Share link** writes every setting into the address as query parameters, and every setting — shape,
   pan, unit, counts and formula — is remembered in `localStorage` for the next visit.
 - **Print recipe as PDF** composes a two-page sheet — formula, method, timetable — as a real vector
