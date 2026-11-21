@@ -753,6 +753,9 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   function g(v){ return wtParts(v)[0]; }
   function gu(v){ var q = wtParts(v); return q[0] + " " + q[1]; }
   function wtUnit(){ return isImp() ? "oz" : "g"; }
+  /* the pdf's weight column is bare numbers under a GRAMS heading, which
+     only works while every row is the same unit; lb-and-oz has to say so */
+  function pdfWt(v){ return isImp() ? gu(v) : g(v); }
   function gsm(v){ var q = wtParts(v); return q[0] + " <small>" + q[1] + "</small>"; }
 
   function tmp(c){ return isImp() ? String(Math.round(toF(c))) : num(round5(c)); }
@@ -1593,20 +1596,20 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 
     var F = d.F, colW = (CW - 8) / 2;
     var bigaRows = [
-      {label:"Flour", grams:g(d.bAddF), pct:pc(d.bAddF/F)},
-      {label:"Water", grams:g(d.bAddW), pct:pc(d.bAddW/F)},
-      {label:"Sourdough starter", grams:g(d.starter), pct:pc(d.starter/F)},
-      {label:"flour from the starter", grams:g(d.sf), pct:pc(d.sf/F), kind:"sub"},
-      {label:"water from the starter", grams:g(d.sw), pct:pc(d.sw/F), kind:"sub"},
-      {label:"Biga total", grams:g(d.bigaMass), pct:pc(d.bigaMass/F), kind:"sum"}
+      {label:"Flour", grams:pdfWt(d.bAddF), pct:pc(d.bAddF/F)},
+      {label:"Water", grams:pdfWt(d.bAddW), pct:pc(d.bAddW/F)},
+      {label:"Sourdough starter", grams:pdfWt(d.starter), pct:pc(d.starter/F)},
+      {label:"flour from the starter", grams:pdfWt(d.sf), pct:pc(d.sf/F), kind:"sub"},
+      {label:"water from the starter", grams:pdfWt(d.sw), pct:pc(d.sw/F), kind:"sub"},
+      {label:"Biga total", grams:pdfWt(d.bigaMass), pct:pc(d.bigaMass/F), kind:"sum"}
     ];
     var rinfRows = [
-      {label:"Biga, all of it", grams:g(d.bigaMass), pct:pc(d.bigaMass/F)},
-      {label:"Flour", grams:g(d.rFlour), pct:pc(d.rFlour/F), skip:d.noRinfFlour},
-      {label:"Water", grams:g(d.rWater), pct:pc(d.rWater/F)},
-      {label:"Salt", grams:g(d.salt), pct:pc(d.salt/F)},
-      {label:"Malt", grams:g(d.malt), pct:pc(d.malt/F)},
-      {label:"Final dough", grams:g(d.finalMass), pct:pc(d.finalMass/F), kind:"sum"}
+      {label:"Biga, all of it", grams:pdfWt(d.bigaMass), pct:pc(d.bigaMass/F)},
+      {label:"Flour", grams:pdfWt(d.rFlour), pct:pc(d.rFlour/F), skip:d.noRinfFlour},
+      {label:"Water", grams:pdfWt(d.rWater), pct:pc(d.rWater/F)},
+      {label:"Salt", grams:pdfWt(d.salt), pct:pc(d.salt/F)},
+      {label:"Malt", grams:pdfWt(d.malt), pct:pc(d.malt/F)},
+      {label:"Final dough", grams:pdfWt(d.finalMass), pct:pc(d.finalMass/F), kind:"sum"}
     ].filter(function(r){ return !r.skip; });
     var rh = d.rFlour > 0 ? (d.rWater / d.rFlour * 100).toFixed(0) + "% of that flour" : "—";
     var e1 = drawStage(ML, colW, y, "Biga", "impasto indiretto",
@@ -1627,11 +1630,11 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 
     heading("Final dough", isPan() ? "what goes into each teglia" : "what ends up in the panetti");
     y = drawTable(ML, CW, y, [
-      {label:"Flour", grams:g(d.F), pct:"100.0%"},
-      {label:"Water", grams:g(d.Wt), pct:pc(d.Wt/F)},
-      {label:"Salt", grams:g(d.salt), pct:pc(d.salt/F)},
-      {label:"Malt", grams:g(d.malt), pct:pc(d.malt/F)},
-      {label:count() + " " + pieceWord(count()) + " of " + gu(S.w), grams:g(d.W), pct:pc(d.W/F), kind:"sum"}
+      {label:"Flour", grams:pdfWt(d.F), pct:"100.0%"},
+      {label:"Water", grams:pdfWt(d.Wt), pct:pc(d.Wt/F)},
+      {label:"Salt", grams:pdfWt(d.salt), pct:pc(d.salt/F)},
+      {label:"Malt", grams:pdfWt(d.malt), pct:pc(d.malt/F)},
+      {label:count() + " " + pieceWord(count()) + " of " + gu(S.w), grams:pdfWt(d.W), pct:pc(d.W/F), kind:"sum"}
     ]) + 10;
 
     /* ---- method ---- */
