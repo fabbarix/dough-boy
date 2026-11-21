@@ -145,6 +145,7 @@ input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
   background:var(--biga);border:2px solid var(--surface);margin-top:-6px;cursor:pointer;
 }
+input[readonly]{background:transparent;border-style:dashed;color:var(--muted-solid);cursor:default}
 input[type="range"]::-moz-range-thumb{
   width:16px;height:16px;border-radius:50%;background:var(--biga);
   border:2px solid var(--surface);cursor:pointer;
@@ -449,6 +450,20 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         </div>
         <div class="duo">
           <div class="field">
+            <div class="top"><label for="tflour">Flour</label><span class="hint">&deg;C</span></div>
+            <input type="number" id="tflour" min="0" max="35" step="0.5" value="18">
+          </div>
+          <div class="field">
+            <div class="top"><label for="r55">Rule of 55</label><span class="hint">sums to</span></div>
+            <input type="number" id="r55" min="45" max="65" step="0.5" value="55">
+          </div>
+        </div>
+        <div class="field">
+          <div class="top"><label for="twater">Water for the impasto</label><span class="hint" id="twaterHint">&deg;C</span></div>
+          <input type="number" id="twater" readonly tabindex="-1" aria-readonly="true" value="19">
+        </div>
+        <div class="duo">
+          <div class="field">
             <div class="top"><label for="tdb">Biga mixed at</label><span class="hint">&deg;C</span></div>
             <input type="number" id="tdb" min="5" max="35" step="0.5" value="18">
           </div>
@@ -606,7 +621,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 <script>
 (function(){
   "use strict";
-  var DEF = {troom:18,tfridge:4,envb:0,envk:0,enva:0,tdb:18,tdf:24,
+  var DEF = {troom:18,tfridge:4,tflour:18,r55:55,envb:0,envk:0,enva:0,tdb:18,tdf:24,
              n:20,shape:0,d:12,k:22,pn:2,pw:30,ph:40,pk:2,unit:0,pc:0,w:264,
              h:65,salt:2.8,malt:0.5,bf:80,bh:45,sp:20,tb:18,tk:2,ta:5,bake:""};
   var KEYS = Object.keys(DEF);
@@ -838,6 +853,13 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     return (lo + hi) / 2;
   }
 
+  /* La regola del 55: room + flour + water should sum to the constant, so the
+     water carries whatever the room and the flour do not. 55 is the usual
+     figure; a hotter mixer puts more friction into the dough, so the constant
+     is editable the way the rule of 22 is. */
+  function waterTemp(){ return S.r55 - S.troom - S.tflour; }
+  function waterSum(){ return num(S.r55) + " \u2212 " + num(S.troom) + " \u2212 " + num(S.tflour); }
+
   function envTemp(e){ return e ? S.tfridge : S.troom; }
   function envWord(e){ return e ? "fridge" : "room"; }
   function envPhrase(e){ return num(envTemp(e)) + " \u00b0C" + (e ? " in the fridge" : ""); }
@@ -965,6 +987,11 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         else if(st.hours > 72) a.push(["A very long " + lbl,
           num(round5(st.hours)) + " h at " + num(st.env) + " \u00b0C. Workable, but the dough will be markedly more acidic by the end."]);
       });
+      var tw = waterTemp();
+      if(tw < 2) a.push(["The rule of 55 asks for water at " + num(round5(tw)) + " \u00b0C",
+        "below freezing is not pourable \u2014 weigh part of the water as ice, or cool the flour, which counts the same against the sum."]);
+      else if(tw > 35) a.push(["The rule of 55 asks for water at " + num(round5(tw)) + " \u00b0C",
+        "that is warm enough to start hurting the yeast on contact. Check the room and flour figures before trusting it."]);
       if(Math.max(S.envb ? 0 : S.troom, S.tdf) > 28) a.push(["Warm enough to shift the flavour",
         "above about 28 \u00b0C the bacteria outrun the yeast. The timings still hold, but expect a sourer, slacker dough than the same formula run cool."]);
     }
@@ -977,7 +1004,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     var steps = [
       ["Mix the biga", "Break <b>"+gu(d.starter)+"</b> of starter into <b>"+gu(Math.max(d.bAddW,0))+"</b> of cool water, then rub in <b>"+gu(Math.max(d.bAddF,0))+"</b> of flour until every crumb is damp. Shaggy, not smooth — a stiff biga at "+S.bh+"% is meant to look under-mixed."],
       ["Ferment "+num(S.tb)+" h", "Hold at "+num(envTemp(S.envb))+" °C"+(S.envb?" in the fridge":"")+". It is ready when it smells of yogurt and hazelnut and has roughly doubled; the hours above already follow the temperature, so trust the dough over the clock."],
-      ["Rinfresco", "Break the <b>"+gu(d.bigaMass)+"</b> of biga into <b>"+gu(Math.max(d.rWater,0))+"</b> of water, hold back a little to dissolve the salt. "+rinfAdd(BOLD,d)+", mix to a rough mass, rest 20 min."],
+      ["Rinfresco", "Break the <b>"+gu(d.bigaMass)+"</b> of biga into <b>"+gu(Math.max(d.rWater,0))+"</b> of water at <b>"+num(round5(waterTemp()))+" °C</b>, hold back a little to dissolve the salt. "+rinfAdd(BOLD,d)+", mix to a rough mass, rest 20 min."],
       ["Salt and develop", "Add <b>"+gu(d.salt)+"</b> of salt with the reserved water and mix until the dough clears the bowl and passes a windowpane. Bring it off the mixer at <b>"+num(S.tdf)+" °C</b>."],
       ["Bulk "+num(S.tk)+" h", bulkText()],
       ["Staglio", staglioText(BOLD)],
@@ -1110,6 +1137,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     });
     PAIRS.forEach(function(p){ var r = $(p[1]); if(r) r.value = S[p[0]]; });
     $("hOut").textContent = Number(S.h).toFixed(1)+" %";
+    syncWater();
     STAGES.forEach(function(k){ $(k+"Hint").textContent = stageHint(k); });
     ["envb","envk","enva"].forEach(function(e){
       pressed('.envs .size[data-env="'+e+'"]', function(b){ return Number(b.dataset.v) === S[e]; });
@@ -1152,8 +1180,14 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
   }
   function onModel(k){ return Math.abs(S[k] - MODEL[k]) < 0.26; }
 
+  function syncWater(){
+    $("twater").value = num(round5(waterTemp()));
+    $("twaterHint").textContent = "= " + waterSum();
+  }
+
   /* refresh the stage fields without fighting the one being typed in */
   function syncStages(skip){
+    syncWater();
     STAGES.forEach(function(k){
       if(k !== skip){
         if($(k).value !== String(S[k])) $(k).value = S[k];
@@ -1498,7 +1532,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
       ["Ferment " + num(S.tb) + " h", "Hold at " + num(envTemp(S.envb)) + " \u00b0C" + (S.envb ? " in the fridge" : "")
         + ". It is ready when it smells of yogurt and hazelnut and has roughly doubled; the hours above already follow the temperature, so trust the dough over the clock."],
       ["Rinfresco", "Break the " + gu(d.bigaMass) + " of biga into " + gu(Math.max(d.rWater,0))
-        + " of water, holding back a little to dissolve the salt. " + rinfAdd(PLAIN,d)
+        + " of water at " + num(round5(waterTemp())) + " \u00b0C, holding back a little to dissolve the salt. " + rinfAdd(PLAIN,d)
         + ", mix to a rough mass, rest 20 minutes."],
       ["Salt and develop", "Add " + gu(d.salt) + " of salt with the reserved water and mix until the dough clears the bowl and passes a windowpane. Bring it off the mixer at " + num(S.tdf) + " \u00b0C."],
       ["Bulk " + num(S.tk) + " h", bulkText()],

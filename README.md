@@ -34,6 +34,9 @@ want — a round panetto, or a teglia sized by the Italian pan rule.
 - **Fermentation times are solved, not typed.** Each stage — biga, bulk, appretto — names whether it
   rises in the room or the fridge, and its hours come from the dough's temperature and its surroundings.
   Type an hour figure yourself and that stage stays put until the next temperature change.
+- **The rule of 55** gives the water temperature for the impasto: room + flour + water sum to 55, so the
+  water carries whatever the room and the flour do not. The constant is editable, since a hotter mixer
+  puts more friction into the dough.
 - **Timetable** counts back from the bake time through appretto, staglio, bulk, rinfresco and the biga,
   and adds a bench-tempering step when the balls come out of the fridge.
 - **Share link** writes every setting into the address as query parameters, and every setting — shape,
