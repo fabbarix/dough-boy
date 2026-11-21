@@ -441,7 +441,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         <div class="duo">
           <div class="field">
             <div class="top"><label for="troom">Room</label><span class="hint">&deg;C</span></div>
-            <input type="number" id="troom" min="5" max="35" step="0.5" value="18">
+            <input type="number" id="troom" min="5" max="35" step="0.5" value="24">
           </div>
           <div class="field">
             <div class="top"><label for="tfridge">Fridge</label><span class="hint">&deg;C</span></div>
@@ -451,7 +451,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
         <div class="duo">
           <div class="field">
             <div class="top"><label for="tflour">Flour</label><span class="hint">&deg;C</span></div>
-            <input type="number" id="tflour" min="0" max="35" step="0.5" value="18">
+            <input type="number" id="tflour" min="0" max="35" step="0.5" value="24">
           </div>
           <div class="field">
             <div class="top"><label for="r55">Rule of 55</label><span class="hint">sums to</span></div>
@@ -621,7 +621,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
 <script>
 (function(){
   "use strict";
-  var DEF = {troom:18,tfridge:4,tflour:18,r55:55,envb:0,envk:0,enva:0,tdb:18,tdf:24,
+  var DEF = {troom:24,tfridge:4,tflour:24,r55:55,envb:0,envk:0,enva:0,tdb:18,tdf:24,
              n:20,shape:0,d:12,k:22,pn:2,pw:30,ph:40,pk:2,unit:0,pc:0,w:264,
              h:65,salt:2.8,malt:0.5,bf:80,bh:45,sp:20,tb:18,tk:2,ta:5,bake:""};
   var KEYS = Object.keys(DEF);
@@ -1163,6 +1163,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
      type yourself is left alone until the next temperature change. */
   var MODEL = {tb:DEF.tb, tk:DEF.tk, ta:DEF.ta}, SCHED = null;
   var STAGES = ["tb","tk","ta"];
+  var GIVEN = {};   // stage hours that actually arrived in a link or storage
 
   /* `seed` is for the first run, where there is no previous model to compare
      against: hours arriving from a link or storage count as following when they
@@ -1175,7 +1176,15 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     STAGES.forEach(function(k){
       var was = MODEL[k];
       MODEL[k] = round5(s[k].hours);
-      if(Math.abs(S[k] - (seed ? MODEL[k] : was)) < 0.26) S[k] = MODEL[k];
+      /* On the first run an hour nobody supplied simply follows the model --
+         the stored DEF figures are the calibration's answer, not an answer for
+         whatever room this visitor is actually in. One that WAS supplied counts
+         as following only if it matches what the model makes of the settings it
+         came with. Afterwards, a stage follows if it matched the PREVIOUS model,
+         so it keeps following as the temperatures move. */
+      var follow = seed ? (!GIVEN[k] || Math.abs(S[k] - MODEL[k]) < 0.26)
+                        : Math.abs(S[k] - was) < 0.26;
+      if(follow) S[k] = MODEL[k];
     });
   }
   function onModel(k){ return Math.abs(S[k] - MODEL[k]) < 0.26; }
@@ -1691,6 +1700,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
     if(F0 > 0) S.sp = Math.min(hi, Math.max(lo, Math.round(legacySt / F0 * 100)));
   }
   if(!S.bake) S.bake = defaultBake();
+  STAGES.forEach(function(k){ GIVEN[k] = (k in stored) || (k in hashed); });
   applySchedule(true);
   update();
 })();
