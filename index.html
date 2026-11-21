@@ -151,9 +151,10 @@ input[type="range"]::-moz-range-thumb{
   border:2px solid var(--surface);cursor:pointer;
 }
 .sizes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
-".shapes,.units,.pantype{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.shapes,.units,.pantype{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
 .envs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:7px 0 2px}
-.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.row2 .field{margin-top:0}
 .pans{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
 .pans.rounds{grid-template-columns:repeat(3,1fr)}
 .size{
@@ -163,10 +164,8 @@ input[type="range"]::-moz-range-thumb{
   border:1px solid var(--line-strong);
 }
 .size .g{display:block;font-family:var(--mono);font-size:10.5px;font-weight:400;opacity:.8}
-.size[aria-pressed="true"]{background:var(--biga);border-color:var(--biga);color:#fff}
-:root[data-theme="dark"] .size[aria-pressed="true"],
-.size[aria-pressed="true"]{color:var(--surface)}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px 18px 4px}
+.size[aria-pressed="true"]{background:var(--biga);border-color:var(--biga);color:var(--surface)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px 18px 4px;border-top:1px solid var(--line)}
 .actions .wide{grid-column:1 / -1}
 .btn{
   font-family:var(--cond);font-weight:600;font-size:13px;letter-spacing:.03em;
@@ -438,7 +437,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
           <div class="top"><label for="bake">Into the oven</label></div>
           <input type="datetime-local" id="bake">
         </div>
-        <div class="duo">
+        <div class="row2">
           <div class="field">
             <div class="top"><label for="troom">Room</label><span class="hint">&deg;C</span></div>
             <input type="number" id="troom" min="5" max="35" step="0.5" value="24">
@@ -448,7 +447,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
             <input type="number" id="tfridge" min="0" max="18" step="0.5" value="4">
           </div>
         </div>
-        <div class="duo">
+        <div class="row2">
           <div class="field">
             <div class="top"><label for="tflour">Flour</label><span class="hint">&deg;C</span></div>
             <input type="number" id="tflour" min="0" max="35" step="0.5" value="24">
@@ -462,7 +461,7 @@ footer.note code{font-family:var(--mono);font-size:11.5px;background:var(--surfa
           <div class="top"><label for="twater">Water for the impasto</label><span class="hint" id="twaterHint">&deg;C</span></div>
           <input type="number" id="twater" readonly tabindex="-1" aria-readonly="true" value="19">
         </div>
-        <div class="duo">
+        <div class="row2">
           <div class="field">
             <div class="top"><label for="tdb">Biga mixed at</label><span class="hint">&deg;C</span></div>
             <input type="number" id="tdb" min="5" max="35" step="0.5" value="18">
